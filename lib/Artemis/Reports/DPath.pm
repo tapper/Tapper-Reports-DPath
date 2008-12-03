@@ -5,7 +5,8 @@ use 5.010;
 class Artemis::Reports::DPath {
         our $VERSION = '0.01';
 
-#        use Artemis::Model 'model';
+        #use Artemis::Model 'model';
+
         use Text::Balanced qw (
                                       extract_delimited
                                       extract_codeblock
