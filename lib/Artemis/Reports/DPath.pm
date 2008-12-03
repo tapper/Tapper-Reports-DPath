@@ -1,25 +1,58 @@
-package Artemis::Reports::DPath;
+use MooseX::Declare;
 
 use 5.010;
-use strict;
-use warnings;
+
+class Artemis::Reports::DPath {
+        our $VERSION = '0.01';
+
+#        use Artemis::Model 'model';
+        use Text::Balanced qw (
+                                      extract_delimited
+                                      extract_bracketed
+                             );
+        use Data::Dumper;
+
+        use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search' ],
+                                      groups  => { all  => [ 'reports_dpath_search' ] },
+                                    };
+
+        method extract_condition_and_part($reports_path) {
+                my ($condition, $path) = extract_bracketed($reports_path, '{}');
+                $path =~ s/^\s*::\s*//;
+                return ($condition, $path);
+        }
+
+        sub reports_dpath_search($) {
+                my ($reports_path) = @_;
+
+                my ($condition, $path) = extract_condition_and_part($reports_path);
+
+                
+#                 say "condition: $condition";
+#                 say "path: $path";
+
+#                 my $dpath = new Data::DPath::Path(path => $path);
+#                 say "dpath->_steps: ".Dumper($dpath->_steps);
+#                 my $rs = model('ReportsDB')->resultset('Report')->search
+#                     (
+#                      { eval '\%$condition'   },
+#                      { order_by => 'id desc' }
+#                     );
+#                 say "count reports: ".Dumper($rs->count);
+        }
+}
+
+1;
+
+__END__
 
 =head1 NAME
 
 Artemis::Reports::DPath - Extended DPath access to Artemis reports.
 
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
-
-
 =head1 SYNOPSIS
 
-    use Artemis::Reports::DPath; # auto imports function 'reports_dpath_search';
+    use Artemis::Reports::DPath 'reports_dpath_search';
     @resultlist = reports_dpath_search(
                      '{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]'
                   );
@@ -36,7 +69,8 @@ the DB.
 =head1 EXPORT
 
 A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+if you don't export anything, such as for a purely object-oriented
+module.
 
 =head1 AUTHOR
 
@@ -51,4 +85,3 @@ This program is released under the following license: proprietary
 
 =cut
 
-1; # End of Artemis::Reports::DPath
