@@ -8,7 +8,7 @@ class Artemis::Reports::DPath {
 #        use Artemis::Model 'model';
         use Text::Balanced qw (
                                       extract_delimited
-                                      extract_bracketed
+                                      extract_codeblock
                              );
         use Data::Dumper;
 
@@ -17,7 +17,7 @@ class Artemis::Reports::DPath {
                                     };
 
         method extract_condition_and_part($reports_path) {
-                my ($condition, $path) = extract_bracketed($reports_path, '{}');
+                my ($condition, $path) = extract_codeblock($reports_path, '{}');
                 $path =~ s/^\s*::\s*//;
                 return ($condition, $path);
         }
@@ -27,7 +27,6 @@ class Artemis::Reports::DPath {
 
                 my ($condition, $path) = extract_condition_and_part($reports_path);
 
-                
 #                 say "condition: $condition";
 #                 say "path: $path";
 
