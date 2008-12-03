@@ -12,3 +12,7 @@ Debian*
 README
 Artemis-Reports-DPath-*
 cover_db
+t/artemis_schema_hardwaredb_test.sqlite
+t/artemis_schema_reportsdb_test.sqlite
+t/artemis_schema_testrundb_test.sqlite
+
