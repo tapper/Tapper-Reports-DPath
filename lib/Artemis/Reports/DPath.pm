@@ -6,16 +6,33 @@ class Artemis::Reports::DPath {
         our $VERSION = '0.01';
 
         #use Artemis::Model 'model';
-
-        use Text::Balanced qw (
-                                      extract_delimited
-                                      extract_codeblock
-                             );
+        #use Artemis::Config;
+        use Text::Balanced 'extract_codeblock';
         use Data::Dumper;
-
         use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search' ],
                                       groups  => { all  => [ 'reports_dpath_search' ] },
                                     };
+
+        sub model
+        {
+                my ($schema_basename) = @_;
+
+                $schema_basename ||= 'TestrunDB';
+
+                my $schema_class = "Artemis::Schema::$schema_basename";
+
+                # lazy load class
+                eval "print 'foo'";
+#                eval "use $schema_class";
+#                 if ($@) {
+#                         print STDERR $@;
+#                         return undef;
+#                 }
+#                 return $schema_class->connect(Artemis::Config->subconfig->{database}{$schema_basename}{dsn},
+#                                               Artemis::Config->subconfig->{database}{$schema_basename}{username},
+#                                               Artemis::Config->subconfig->{database}{$schema_basename}{password});
+        }
+
 
         method extract_condition_and_part($reports_path) {
                 my ($condition, $path) = extract_codeblock($reports_path, '{}');
