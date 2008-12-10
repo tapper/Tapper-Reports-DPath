@@ -9,6 +9,7 @@ author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
 
 build_requires 'Test::More';
 requires 'perl' => 5.010;
+requires 'Artemis::Config';
 requires 'parent' => 0;
 
 makemaker_args(dist => { PREOP => 'pod2text lib/Artemis/Reports/DPath.pm > README' });
