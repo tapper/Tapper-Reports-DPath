@@ -1,62 +1,52 @@
-use MooseX::Declare;
+package Artemis::Reports::DPath;
+
+#use MooseX::Declare; # Does not work with eval's in Perl 5.10.
+
+use Moose;
+use MooseX::Method::Signatures;
 
 use 5.010;
+use strict;
+use warnings;
 
-class Artemis::Reports::DPath {
-        our $VERSION = '0.01';
+our $VERSION = '0.01';
 
-        #use Artemis::Model 'model';
-        #use Artemis::Config;
-        use Text::Balanced 'extract_codeblock';
-        use Data::Dumper;
-        use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search' ],
-                                      groups  => { all  => [ 'reports_dpath_search' ] },
-                                    };
+use Artemis::Model 'model';
+use Text::Balanced 'extract_codeblock';
+use Data::Dumper;
+use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search' ],
+                              groups  => { all  => [ 'reports_dpath_search' ] },
+                            };
 
-        sub model
-        {
-                my ($schema_basename) = @_;
+method extract_condition_and_part($reports_path) {
+        my ($condition, $path) = extract_codeblock($reports_path, '{}');
+        $path =~ s/^\s*::\s*//;
+        return ($condition, $path);
+}
 
-                $schema_basename ||= 'TestrunDB';
+sub reports_dpath_search($) {
+        my ($reports_path) = @_;
 
-                my $schema_class = "Artemis::Schema::$schema_basename";
+        my ($condition, $path) = extract_condition_and_part($reports_path);
 
-                # lazy load class
-                eval "print 'foo'";
-#                eval "use $schema_class";
-#                 if ($@) {
-#                         print STDERR $@;
-#                         return undef;
-#                 }
-#                 return $schema_class->connect(Artemis::Config->subconfig->{database}{$schema_basename}{dsn},
-#                                               Artemis::Config->subconfig->{database}{$schema_basename}{username},
-#                                               Artemis::Config->subconfig->{database}{$schema_basename}{password});
-        }
+        say "condition: $condition";
+        say "path: $path";
 
+        my $dpath = new Data::DPath::Path(path => $path);
+        say "dpath->_steps: ".Dumper($dpath->_steps);
+        my $rs = model('ReportsDB')->resultset('Report')->search
+            (
+             {
+              eval '\%$condition'   },
+             {
+              order_by => 'id desc' }
+            );
+        say "count reports: ".Dumper($rs->count);
+}
 
-        method extract_condition_and_part($reports_path) {
-                my ($condition, $path) = extract_codeblock($reports_path, '{}');
-                $path =~ s/^\s*::\s*//;
-                return ($condition, $path);
-        }
-
-        sub reports_dpath_search($) {
-                my ($reports_path) = @_;
-
-                my ($condition, $path) = extract_condition_and_part($reports_path);
-
-#                 say "condition: $condition";
-#                 say "path: $path";
-
-#                 my $dpath = new Data::DPath::Path(path => $path);
-#                 say "dpath->_steps: ".Dumper($dpath->_steps);
-#                 my $rs = model('ReportsDB')->resultset('Report')->search
-#                     (
-#                      { eval '\%$condition'   },
-#                      { order_by => 'id desc' }
-#                     );
-#                 say "count reports: ".Dumper($rs->count);
-        }
+sub _dummy_needed_for_tests {
+        # there were problems with eval
+        return eval "12345";
 }
 
 1;
@@ -70,8 +60,13 @@ Artemis::Reports::DPath - Extended DPath access to Artemis reports.
 =head1 SYNOPSIS
 
     use Artemis::Reports::DPath 'reports_dpath_search';
+    # the first bogomips entry of math sections:
     @resultlist = reports_dpath_search(
                      '{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]'
+                  );
+    # all report IDs of suite_id 17 that FAILed:
+    @resultlist = reports_dpath_search(
+                     '{ suite_name => "TestSuite-LmBench" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id'
                   );
 
 This searches all reports of the test suite "TestSuite-LmBench" and
@@ -88,6 +83,14 @@ the DB.
 A list of functions that can be exported.  You can delete this section
 if you don't export anything, such as for a purely object-oriented
 module.
+
+=head1 METHODS and FUNCTIONS
+
+=head2 reports_dpath_search
+
+Takes an extended DPath expression, applies it to an
+Artemis::TAP::Data structure and returns the matching results in an
+array.
 
 =head1 AUTHOR
 

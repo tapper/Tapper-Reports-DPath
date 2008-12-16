@@ -12,7 +12,8 @@ use Test::Fixture::DBIC::Schema;
 # -------------------- path division --------------------
 
 my $dpath = new Artemis::Reports::DPath;
-my $condition, $path;
+my $condition;
+my $path;
 
 ($condition, $path) = $dpath->extract_condition_and_part('{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]');
 is($condition, '{ suite_name => "TestSuite-LmBench" }', "condition easy");
