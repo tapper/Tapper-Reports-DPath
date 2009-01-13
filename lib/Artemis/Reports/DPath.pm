@@ -42,6 +42,7 @@ sub reports_dpath_search($) {
               order_by => 'id desc' }
             );
         say "count reports: ".Dumper($rs->count);
+        return $rs->count;
 }
 
 sub _dummy_needed_for_tests {
