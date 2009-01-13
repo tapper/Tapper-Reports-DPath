@@ -1,53 +1,50 @@
-package Artemis::Reports::DPath;
-
-#use MooseX::Declare; # Does not work with eval's in Perl 5.10.
-
-use Moose;
-use MooseX::Method::Signatures;
+use MooseX::Declare;
 
 use 5.010;
-use strict;
-use warnings;
 
-our $VERSION = '0.01';
+class Artemis::Reports::DPath {
 
-use Artemis::Model 'model';
-use Text::Balanced 'extract_codeblock';
-use Data::Dumper;
-use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search' ],
-                              groups  => { all  => [ 'reports_dpath_search' ] },
-                            };
+        our $VERSION = '0.01';
 
-method extract_condition_and_part($reports_path) {
-        my ($condition, $path) = extract_codeblock($reports_path, '{}');
-        $path =~ s/^\s*::\s*//;
-        return ($condition, $path);
-}
+        use Artemis::Model 'model';
+        use Text::Balanced 'extract_codeblock';
+        use Data::Dumper;
+        use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search' ],
+                                      groups  => { all  => [ 'reports_dpath_search' ] },
+                                    };
 
-sub reports_dpath_search($) {
-        my ($reports_path) = @_;
+        method extract_condition_and_part($reports_path) {
+                my ($condition, $path) = extract_codeblock($reports_path, '{}');
+                $path =~ s/^\s*::\s*//;
+                return ($condition, $path);
+        }
 
-        my ($condition, $path) = extract_condition_and_part($reports_path);
+        sub reports_dpath_search($) {
+                my ($reports_path) = @_;
 
-        say "condition: $condition";
-        say "path: $path";
+                my ($condition, $path) = extract_condition_and_part($reports_path);
 
-        my $dpath = new Data::DPath::Path(path => $path);
-        say "dpath->_steps: ".Dumper($dpath->_steps);
-        my $rs = model('ReportsDB')->resultset('Report')->search
-            (
-             {
-              eval '\%$condition'   },
-             {
-              order_by => 'id desc' }
-            );
-        say "count reports: ".Dumper($rs->count);
-        return $rs->count;
-}
+                say "condition: $condition";
+                say "path: $path";
 
-sub _dummy_needed_for_tests {
-        # there were problems with eval
-        return eval "12345";
+                my $dpath = new Data::DPath::Path(path => $path);
+                say "dpath->_steps: ".Dumper($dpath->_steps);
+                my $rs = model('ReportsDB')->resultset('Report')->search
+                    (
+                     {
+                      eval '\%$condition'   },
+                     {
+                      order_by => 'id desc' }
+                    );
+                say "count reports: ".Dumper($rs->count);
+                return $rs->count;
+        }
+
+        sub _dummy_needed_for_tests {
+                # there were problems with eval
+                return eval "12345";
+        }
+
 }
 
 1;

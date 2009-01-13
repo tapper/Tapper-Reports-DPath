@@ -1,6 +1,7 @@
 #! perl
 
 use Test::More tests => 9;
+
 BEGIN {
         use Class::C3;
         use MRO::Compat;
@@ -36,4 +37,6 @@ construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb
 # -----------------------------------------------------------------------------------------------------------------
 
 is( reportsdb_schema->resultset('Report')->count, 3,  "report count" );
+
+#is( reports_dpath_search('{} :: /tap/'), 3,  "reports_dpath_search" );
 
