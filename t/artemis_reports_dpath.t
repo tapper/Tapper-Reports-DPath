@@ -1,35 +1,49 @@
 #! perl
 
-use Test::More tests => 9;
+use Test::More tests => 17;
 
 BEGIN {
         use Class::C3;
         use MRO::Compat;
 }
-use Artemis::Reports::DPath 'reports_dpath_search';
+use Artemis::Reports::DPath 'reports_dpath_search', 'rds';
 use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
+use Data::Dumper;
 
 # -------------------- path division --------------------
 
 my $dpath = new Artemis::Reports::DPath;
 my $condition;
 my $path;
+my @res;
 
-($condition, $path) = $dpath->extract_condition_and_part('{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]');
+($condition, $path) = Artemis::Reports::DPath::_extract_condition_and_part('{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]');
 is($condition, '{ suite_name => "TestSuite-LmBench" }', "condition easy");
 is($path,      '/tap/section/math/*/bogomips[0]',       "path easy");
 
-($condition, $path) = $dpath->extract_condition_and_part('{ suite_name => "TestSuite::LmBench" } :: /tap/section/math/*/bogomips[0]');
+($condition, $path) = Artemis::Reports::DPath::_extract_condition_and_part('{ suite_name => "TestSuite::LmBench" } :: /tap/section/math/*/bogomips[0]');
 is($condition, '{ suite_name => "TestSuite::LmBench" }', "condition colons");
 is($path,      '/tap/section/math/*/bogomips[0]',        "path colons");
 
-($condition, $path) = $dpath->extract_condition_and_part('{ suite_name => "{TestSuite::LmBench}" } :: /tap/section/math/*/bogomips[0]');
+($condition, $path) = Artemis::Reports::DPath::_extract_condition_and_part('{ suite_name => "{TestSuite::LmBench}" } :: /tap/section/math/*/bogomips[0]');
 is($condition, '{ suite_name => "{TestSuite::LmBench}" }', "condition balanced braces");
 is($path,      '/tap/section/math/*/bogomips[0]',          "path balanced braces");
 
-($condition, $path) = $dpath->extract_condition_and_part('{ suite_name => "TestSuite::LmBench}" } :: /tap/section/math/*/bogomips[0]');
+($condition, $path) = Artemis::Reports::DPath::_extract_condition_and_part('{ suite_name => "TestSuite::LmBench}" } :: /tap/section/math/*/bogomips[0]');
 is($condition, '{ suite_name => "TestSuite::LmBench}" }', "condition unbalanced braces");
+is($path,      '/tap/section/math/*/bogomips[0]',         "path unbalanced braces");
+
+($condition, $path) = Artemis::Reports::DPath::_extract_condition_and_part('{ } :: /tap/section/math/*/bogomips[0]');
+is($condition, '{ }',                                     "condition empty braces");
+is($path,      '/tap/section/math/*/bogomips[0]',         "path unbalanced braces");
+
+($condition, $path) = Artemis::Reports::DPath::_extract_condition_and_part(':: /tap/section/math/*/bogomips[0]');
+is($condition, undef,                                     "condition just colons");
+is($path,      '/tap/section/math/*/bogomips[0]',         "path unbalanced braces");
+
+($condition, $path) = Artemis::Reports::DPath::_extract_condition_and_part('/tap/section/math/*/bogomips[0]');
+is($condition, undef,                                     "condition no braces no colons");
 is($path,      '/tap/section/math/*/bogomips[0]',         "path unbalanced braces");
 
 # -----------------------------------------------------------------------------------------------------------------
@@ -38,5 +52,9 @@ construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb
 
 is( reportsdb_schema->resultset('Report')->count, 3,  "report count" );
 
-#is( reports_dpath_search('{} :: /tap/'), 3,  "reports_dpath_search" );
+@res = reports_dpath_search('{}::/tap/');
+is(scalar @res, 3,  "reports_dpath_search" );
+
+@res = rds('{ id => 23 }::/tap/foo/bar');
+is(scalar @res, 1,  "reports_dpath_search" );
 
