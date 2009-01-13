@@ -7,10 +7,15 @@ name     'Artemis-Reports-DPath';
 all_from 'lib/Artemis/Reports/DPath.pm';
 author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
 
-build_requires 'Test::More';
-requires 'perl' => 5.010;
+requires 'perl'                 => 5.010;
+requires 'parent'               => 0;
+requires 'B::Hooks::EndOfScope' => '0.05';
 requires 'Artemis::Config';
-requires 'parent' => 0;
+requires 'Artemis::Schema';
+
+build_requires 'Test::More';
+build_requires 'Artemis::Schema::TestTools';
+build_requires 'Test::Fixture::DBIC::Schema';
 
 makemaker_args(dist => { PREOP => 'pod2text lib/Artemis/Reports/DPath.pm > README' });
 
