@@ -10,8 +10,8 @@ class Artemis::Reports::DPath {
         use Text::Balanced 'extract_codeblock';
         use Data::DPath::Path;
         use Data::Dumper;
-        use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search' ],
-                                      groups  => { all  => [ 'reports_dpath_search' ] },
+        use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search', 'rds' ],
+                                      groups  => { all  => [ 'reports_dpath_search', 'rds' ] },
                                     };
 
         sub _extract_condition_and_part {
@@ -20,6 +20,9 @@ class Artemis::Reports::DPath {
                 $path =~ s/^\s*::\s*//;
                 return ($condition, $path);
         }
+
+        # better use alias
+        sub rds { reports_dpath_search(@_) }
 
         sub reports_dpath_search($) {
                 my ($reports_path) = @_;
