@@ -12,6 +12,7 @@ requires 'parent'               => 0;
 requires 'B::Hooks::EndOfScope' => '0.05';
 requires 'Artemis::Config';
 requires 'Artemis::Schema';
+requires 'Data::DPath';
 
 build_requires 'Test::More';
 build_requires 'Artemis::Schema::TestTools';

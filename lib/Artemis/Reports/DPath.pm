@@ -8,12 +8,14 @@ class Artemis::Reports::DPath {
 
         use Artemis::Model 'model';
         use Text::Balanced 'extract_codeblock';
+        use Data::DPath::Path;
         use Data::Dumper;
         use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search' ],
                                       groups  => { all  => [ 'reports_dpath_search' ] },
                                     };
 
-        method extract_condition_and_part($reports_path) {
+        sub _extract_condition_and_part {
+                my ($reports_path) = @_;
                 my ($condition, $path) = extract_codeblock($reports_path, '{}');
                 $path =~ s/^\s*::\s*//;
                 return ($condition, $path);
@@ -22,22 +24,19 @@ class Artemis::Reports::DPath {
         sub reports_dpath_search($) {
                 my ($reports_path) = @_;
 
-                my ($condition, $path) = extract_condition_and_part($reports_path);
-
-                say "condition: $condition";
-                say "path: $path";
-
-                my $dpath = new Data::DPath::Path(path => $path);
-                say "dpath->_steps: ".Dumper($dpath->_steps);
+                my ($condition, $path) = _extract_condition_and_part($reports_path);
+                my $dpath              = new Data::DPath::Path(path => $path);
+                my %condition          = %{ eval $condition };
                 my $rs = model('ReportsDB')->resultset('Report')->search
                     (
                      {
-                      eval '\%$condition'   },
+                      %condition
+                     },
                      {
-                      order_by => 'id desc' }
+                      order_by => 'id desc'
+                     }
                     );
-                say "count reports: ".Dumper($rs->count);
-                return $rs->count;
+                return $rs->all;
         }
 
         sub _dummy_needed_for_tests {
