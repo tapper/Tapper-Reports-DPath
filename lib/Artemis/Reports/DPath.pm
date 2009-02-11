@@ -22,7 +22,7 @@ class Artemis::Reports::DPath {
         }
 
         # better use alias
-        sub rds { reports_dpath_search(@_) }
+        sub rds($) { reports_dpath_search(@_) }
 
         sub reports_dpath_search($) {
                 my ($reports_path) = @_;

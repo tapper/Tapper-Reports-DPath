@@ -24,13 +24,13 @@ construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb
 
 is( reportsdb_schema->resultset('Report')->count, 3,  "report count" );
 
-@res = reports_dpath_search('{}::/tap/');
+@res = rds '{}::/tap/';
 is(scalar @res, 3,  "empty braces" );
 
-@res = reports_dpath_search('/tap/');
+@res = rds '/tap/';
 is(scalar @res, 3,  "no braces" );
 
-@res = rds('{ id => 23 }::/tap/foo/bar');
-#print STDERR Dumper(\@res);
+@res = rds '{ id => 23 }::/tap/foo/bar';
+print STDERR Dumper([ map { $_->tap } @res ]);
 is(scalar @res, 1,  "search by id" );
 
