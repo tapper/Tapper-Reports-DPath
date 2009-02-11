@@ -29,7 +29,7 @@ class Artemis::Reports::DPath {
 
                 my ($condition, $path) = _extract_condition_and_part($reports_path);
                 my $dpath              = new Data::DPath::Path(path => $path);
-                my %condition          = %{ eval $condition };
+                my %condition          = $condition ? %{ eval $condition } : ();
                 my $rs = model('ReportsDB')->resultset('Report')->search
                     (
                      {

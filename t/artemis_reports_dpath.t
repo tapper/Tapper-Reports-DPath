@@ -27,12 +27,8 @@ is( reportsdb_schema->resultset('Report')->count, 3,  "report count" );
 @res = reports_dpath_search('{}::/tap/');
 is(scalar @res, 3,  "empty braces" );
 
-SKIP:
-{
-        skip "currently breaks", 1;
-        @res = reports_dpath_search('/tap/');
-        is(scalar @res, 3,  "no braces" );
-}
+@res = reports_dpath_search('/tap/');
+is(scalar @res, 3,  "no braces" );
 
 @res = rds('{ id => 23 }::/tap/foo/bar');
 #print STDERR Dumper(\@res);
