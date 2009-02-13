@@ -8,8 +8,10 @@ class Artemis::Reports::DPath {
 
         use Artemis::Model 'model';
         use Text::Balanced 'extract_codeblock';
+        use Artemis::TAP::Harness;
         use Data::DPath::Path;
         use Data::Dumper;
+        use TAP::DOM;
         use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search', 'rds' ],
                                       groups  => { all  => [ 'reports_dpath_search', 'rds' ] },
                                     };
@@ -28,7 +30,7 @@ class Artemis::Reports::DPath {
                 my ($reports_path) = @_;
 
                 my ($condition, $path) = _extract_condition_and_part($reports_path);
-                my $dpath              = new Data::DPath::Path(path => $path);
+                my $dpath              = new Data::DPath::Path( path => $path );
                 my %condition          = $condition ? %{ eval $condition } : ();
                 my $rs = model('ReportsDB')->resultset('Report')->search
                     (
@@ -39,14 +41,52 @@ class Artemis::Reports::DPath {
                       order_by => 'id desc'
                      }
                     );
-                return $rs->all;
+                my @rows = $rs->all;
+                my @data = map { as_data($_) } @rows;
+                #print STDERR Dumper(\@data);
+                return map { $dpath->match ($_) } @data;
         }
 
         sub _dummy_needed_for_tests {
-                # there were problems with eval
+                # once there were problems with eval
                 return eval "12345";
         }
 
+        sub as_data
+        {
+                my ($report) = @_;
+
+                my $simple_hash = {
+                                   report => {
+                                              $report->get_columns,
+                                              suite_name         => $report->suite ? $report->suite->name : 'unknown',
+                                              machine_name       => $report->machine_name || 'unknown',
+                                              created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
+                                              created_at_ymd     => $report->created_at->ymd('-'),
+                                             },
+                                   results => get_tapdom($report),
+                                  };
+                return $simple_hash;
+        }
+
+        sub get_tapdom
+        {
+                my ($report) = @_;
+
+                my $TAPVERSION = "TAP Version 13";
+                my @tapdata = ();
+                if (not $report->tapdata) {
+                        my $harness = new Artemis::TAP::Harness( tap => $report->tap );
+                        $harness->evaluate_report();
+                        foreach (@{$harness->parsed_report->{tap_sections}}) {
+                                my $rawtap = $_->{raw};
+                                $rawtap = $TAPVERSION."\n".$rawtap unless $rawtap =~ /^TAP Version/ms;
+                                my $tapdata = new TAP::DOM ( tap => $rawtap );
+                                push @tapdata, { section => { $_->{section_name} => { tap => $tapdata }}};
+                        }
+                }
+                return \@tapdata;
+        }
 }
 
 1;
@@ -88,9 +128,12 @@ module.
 
 =head2 reports_dpath_search
 
-Takes an extended DPath expression, applies it to an
-Artemis::TAP::Data structure and returns the matching results in an
-array.
+Takes an extended DPath expression, applies it to an Artemis TAP::DOM
+structure and returns the matching results in an array.
+
+=head2 rds
+
+Alias for reports_dpath_search.
 
 =head1 AUTHOR
 
