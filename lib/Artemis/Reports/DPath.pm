@@ -26,15 +26,16 @@ class Artemis::Reports::DPath {
         # better use alias
         sub rds($) { reports_dpath_search(@_) }
 
-        # allow trivial or readable id column (id or "report.id") which normally needs to be "me.id"
+        # allow trivial better readable column names
+        # - foo => 23           ... mapped to "me.foo" => 23
+        # - "report.foo" => 23  ... mapped to "me.foo" => 23
+        # - suite_name => "bar" ... mapped to "suite.name" => "bar"
         sub _fix_condition
         {
                 no warnings 'uninitialized';
                 my ($condition) = @_;
-                say STDERR "1 condition = $condition";
                 $condition      =~ s/(['"])?\bsuite_name\b(['"])?\s*=>/"suite.name" =>/;        # ';
                 $condition      =~ s/(\W)(['"])?((report|me)\.)?(?<!suite\.)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
-                say STDERR "2 condition = $condition";
                 return $condition;
 
         }
@@ -133,12 +134,6 @@ The part before the '::' selects reports to search in a DBIx::Class
 search query, the second part is a normal L<Data::DPath|Data::DPath>
 expression that matches against the datastructure that is build from
 the DB.
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented
-module.
 
 =head1 METHODS and FUNCTIONS
 
