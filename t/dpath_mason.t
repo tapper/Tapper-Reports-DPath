@@ -13,7 +13,7 @@ use Test::Fixture::DBIC::Schema;
 use Data::Dumper;
 
 print "TAP Version 13\n";
-plan tests => 1;
+plan tests => 2;
 
 # -------------------- path division --------------------
 
@@ -27,5 +27,6 @@ construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb
 # -----------------------------------------------------------------------------------------------------------------
 
 # component paths look (and must be) absolute, but are always taken relative to comp_root
-like($mason->render(file     => "/t/helloworld.mas"), qr/Hello, world!\s*/, "mason hello world");
+like($mason->render(file     => "/t/helloworld.mas"), qr/Hello, world!\s*/, "mason hello world file");
+like($mason->render(template => "foo <% 'bar' %> baz"), qr/foo bar baz\s*/, "mason hello world template");
 $mason->render(template => "SOME_TEMPLATE");

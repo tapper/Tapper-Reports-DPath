@@ -12,6 +12,15 @@ class Artemis::Reports::DPath::Mason {
         }
         method render_template ($template) {
                 say "template: $template";
+                my $outbuf;
+                my $interp = new HTML::Mason::Interp
+                    (
+                     use_object_files => 0,
+                     out_method => \$outbuf,
+                    );
+                my $anon_comp = eval { $interp->make_component( comp_source => $template ) };
+                die $@ if $@;
+                $interp->exec($anon_comp);
         }
         method render_file ($file) {
                 say "file: $file (cwd = ".cwd().")";
