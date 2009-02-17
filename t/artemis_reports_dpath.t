@@ -13,7 +13,7 @@ use Data::Dumper;
 
 
 print "TAP Version 13\n";
-plan tests => 25;
+plan tests => 29;
 
 # -------------------- path division --------------------
 
@@ -49,15 +49,31 @@ print "  ...\n";
 
 # -------------------- syntax fake sugar --------------------
 
+# single
 is(Artemis::Reports::DPath::_fix_condition('{ id => 23 }'),          '{ "me.id" => 23 }', "allow easier report.id column 1");
 is(Artemis::Reports::DPath::_fix_condition('{ "id" => 23 }'),        '{ "me.id" => 23 }', "allow easier report.id column 2");
 is(Artemis::Reports::DPath::_fix_condition('{ "me.id" => 23 }'),     '{ "me.id" => 23 }', "allow easier report.id column 3");
 is(Artemis::Reports::DPath::_fix_condition('{ "report.id" => 23 }'), '{ "me.id" => 23 }', "allow easier report.id column 4");
 
+# multi
 is(Artemis::Reports::DPath::_fix_condition('{ id => 23, suite_name => "perfmon" }'),          '{ "me.id" => 23, "suite.name" => "perfmon" }', "allow easier report.id column 1");
 is(Artemis::Reports::DPath::_fix_condition('{ "id" => 23, suite_name => "perfmon" }'),        '{ "me.id" => 23, "suite.name" => "perfmon" }', "allow easier report.id column 2");
 is(Artemis::Reports::DPath::_fix_condition('{ "me.id" => 23, suite_name => "perfmon" }'),     '{ "me.id" => 23, "suite.name" => "perfmon" }', "allow easier report.id column 3");
 is(Artemis::Reports::DPath::_fix_condition('{ "report.id" => 23, suite_name => "perfmon" }'), '{ "me.id" => 23, "suite.name" => "perfmon" }', "allow easier report.id column 4");
+
+# multi + newlines
+is(Artemis::Reports::DPath::_fix_condition('{ id => 23,
+suite_name => "perfmon" }'),          '{ "me.id" => 23,
+"suite.name" => "perfmon" }', "allow easier report.id column 1");
+is(Artemis::Reports::DPath::_fix_condition('{ "id" => 23,
+suite_name => "perfmon" }'),        '{ "me.id" => 23,
+"suite.name" => "perfmon" }', "allow easier report.id column 2");
+is(Artemis::Reports::DPath::_fix_condition('{ "me.id" => 23,
+suite_name => "perfmon" }'),     '{ "me.id" => 23,
+"suite.name" => "perfmon" }', "allow easier report.id column 3");
+is(Artemis::Reports::DPath::_fix_condition('{ "report.id" => 23,
+suite_name => "perfmon" }'), '{ "me.id" => 23,
+"suite.name" => "perfmon" }', "allow easier report.id column 4");
 
 # -------------------- get by paths --------------------
 
