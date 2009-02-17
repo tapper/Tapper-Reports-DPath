@@ -6,4 +6,3 @@ use warnings;
 use Artemis::Test;
 
 artemis_suite_meta();
-

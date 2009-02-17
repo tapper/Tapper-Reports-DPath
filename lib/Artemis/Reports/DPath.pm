@@ -38,12 +38,14 @@ class Artemis::Reports::DPath {
                       %condition
                      },
                      {
-                      order_by => 'id desc'
+                      order_by  => 'me.id desc',
+                      join      => [ 'suite', ],
+                      '+select' => [ 'suite.name', ],
+                      '+as'     => [ 'suite.name', ]
                      }
                     );
                 my @rows = $rs->all;
                 my @data = map { as_data($_) } @rows;
-                #print STDERR Dumper(\@data);
                 return map { $dpath->match ($_) } @data;
         }
 

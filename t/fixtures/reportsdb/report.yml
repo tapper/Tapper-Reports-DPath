@@ -1,9 +1,23 @@
 ---
 
+# ---------- Suite ----------
+
+- schema: Suite
+  name: perfmon suite
+  data:
+    id: 7
+    name: perfmon
+    type: software
+    description: The Perfmon Dummy Suite
+  
+# ---------- Report ----------
+
 - schema: Report
   name: dummy 1
   data:
     id: 21
+    suite_id: 7
+    suite_version: 1.01
     tap: |
       1..4
       ok 1 foo
@@ -15,6 +29,8 @@
   name: dummy 2
   data:
     id: 22
+    suite_id: 7
+    suite_version: 1.02
     tap: |
       1..3
       ok 1 berlin
@@ -25,6 +41,8 @@
   name: dummy 3
   data:
     id: 23
+    suite_id: 7
+    suite_version: 1.03
     tap: |
       1..4
       ok 1 affe
