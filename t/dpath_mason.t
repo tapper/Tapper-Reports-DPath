@@ -12,7 +12,6 @@ use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Data::Dumper;
 
-
 print "TAP Version 13\n";
 plan tests => 1;
 
@@ -27,6 +26,6 @@ my $path;
 construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb/report.yml' );
 # -----------------------------------------------------------------------------------------------------------------
 
-$mason->render(file     => "SOME_FILE");
+# component paths look (and must be) absolute, but are always taken relative to comp_root
+like($mason->render(file     => "/t/helloworld.mas"), qr/Hello, world!\s*/, "mason hello world");
 $mason->render(template => "SOME_TEMPLATE");
-ok(1);

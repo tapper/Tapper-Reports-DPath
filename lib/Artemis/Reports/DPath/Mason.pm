@@ -3,11 +3,8 @@ use MooseX::Declare;
 use 5.010;
 
 class Artemis::Reports::DPath::Mason {
-        #use HTML::Mason;
-
-#         use Sub::Exporter -setup => { exports =>           [ 'render' ],
-#                                       groups  => { all  => [ 'render' ] },
-#                                     };
+        use HTML::Mason;
+        use Cwd 'abs_path', 'cwd';
 
         method render (:$file?, :$template?) {
                 return $self->render_file     ($file)     if $file;
@@ -17,8 +14,16 @@ class Artemis::Reports::DPath::Mason {
                 say "template: $template";
         }
         method render_file ($file) {
-                say "file: $file";
-                
+                say "file: $file (cwd = ".cwd().")";
+
+                my $outbuf;
+                my $interp = new HTML::Mason::Interp
+                    (
+                     use_object_files => 0,
+                     out_method => \$outbuf,
+                    );
+                $interp->exec($file);
+                return $outbuf;
         }
 }
 
