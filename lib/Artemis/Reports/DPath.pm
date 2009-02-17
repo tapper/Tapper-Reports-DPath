@@ -26,11 +26,25 @@ class Artemis::Reports::DPath {
         # better use alias
         sub rds($) { reports_dpath_search(@_) }
 
+        # allow trivial or readable id column (id or "report.id") which normally needs to be "me.id"
+        sub _fix_condition
+        {
+                no warnings 'uninitialized';
+                my ($condition) = @_;
+                say STDERR "1 condition = $condition";
+                $condition      =~ s/(['"])?\bsuite_name\b(['"])?\s*=>/"suite.name" =>/;        # ';
+                $condition      =~ s/(\W)(['"])?((report|me)\.)?(?<!suite\.)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
+                say STDERR "2 condition = $condition";
+                return $condition;
+
+        }
+
         sub reports_dpath_search($) {
                 my ($reports_path) = @_;
 
                 my ($condition, $path) = _extract_condition_and_part($reports_path);
                 my $dpath              = new Data::DPath::Path( path => $path );
+                $condition             = _fix_condition($condition);
                 my %condition          = $condition ? %{ eval $condition } : ();
                 my $rs = model('ReportsDB')->resultset('Report')->search
                     (
