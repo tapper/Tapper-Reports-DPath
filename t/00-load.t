@@ -1,12 +1,13 @@
 #!perl -T
 
-use Test::More tests => 2;
+use Test::More tests => 3;
 
 use Class::C3;
 use MRO::Compat;
 
 BEGIN {
 	use_ok( 'Artemis::Reports::DPath' );
+	use_ok( 'Artemis::Reports::DPath::Mason' );
 }
 
 # there were some eval problems
