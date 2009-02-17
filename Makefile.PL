@@ -13,6 +13,7 @@ requires 'B::Hooks::EndOfScope' => '0.05';
 requires 'Artemis::Config';
 requires 'Artemis::Schema';
 requires 'Data::DPath';
+requires 'HTML::Mason'          => "1.40";
 
 build_requires 'Test::More';
 build_requires 'Artemis::Schema::TestTools';
