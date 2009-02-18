@@ -4,7 +4,7 @@ use 5.010;
 
 class Artemis::Reports::DPath::Mason {
         use HTML::Mason;
-        use Cwd 'abs_path', 'cwd';
+        use Data::Dumper;
 
         method render (:$file?, :$template?) {
                 return $self->render_file     ($file)     if $file;
@@ -15,22 +15,26 @@ class Artemis::Reports::DPath::Mason {
                 my $outbuf;
                 my $interp = new HTML::Mason::Interp
                     (
-                     use_object_files => 0,
+                     #use_object_files => 0,
                      out_method => \$outbuf,
                     );
                 my $anon_comp = eval { $interp->make_component( comp_source => $template ) };
-                die $@ if $@;
-                $interp->exec($anon_comp);
+                die "eval error: ".$@ if $@;
+                my $m = new HTML::Mason::Request( interp     => $interp,
+                                                  comp       => $anon_comp,
+                                                  out_method => \$outbuf,
+                                                );
+                print STDERR Dumper($m);
+                $m->comp($anon_comp);
         }
+
         method render_file ($file) {
-                say "file: $file (cwd = ".cwd().")";
+                # must be absolute to mason, although meant relative in real world
+                $file = "/$file" unless $file =~ m(^/);
 
                 my $outbuf;
-                my $interp = new HTML::Mason::Interp
-                    (
-                     use_object_files => 0,
-                     out_method => \$outbuf,
-                    );
+                my $interp = new HTML::Mason::Interp( use_object_files => 0,
+                                                      out_method       => \$outbuf );
                 $interp->exec($file);
                 return $outbuf;
         }
