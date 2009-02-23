@@ -33,6 +33,6 @@ use Cwd 'abs_path', 'cwd';
 like($mason->render(file     => "/t/helloworld.mas"), qr/Hello, world!\s*/, "mason hello world file");
 SKIP: {
         skip "bummer!", 1;
-        #like($mason->render(template => "foo <% 'bar' %> baz"), qr/foo bar baz\s*/, "mason hello world template");
+        like($mason->render(template => "foo <% 'bar' %> baz"), qr/foo bar baz\s*/, "mason hello world template");
 }
 #$mason->render(template => "SOME_TEMPLATE");

@@ -4,6 +4,7 @@ use 5.010;
 
 class Artemis::Reports::DPath::Mason {
         use HTML::Mason;
+        use Cwd 'cwd';
         use Data::Dumper;
 
         method render (:$file?, :$template?) {
@@ -15,7 +16,8 @@ class Artemis::Reports::DPath::Mason {
                 my $outbuf;
                 my $interp = new HTML::Mason::Interp
                     (
-                     #use_object_files => 0,
+                     use_object_files => 1,
+                     comp_root => cwd(),
                      out_method => \$outbuf,
                     );
                 my $anon_comp = eval { $interp->make_component( comp_source => $template ) };
@@ -33,8 +35,11 @@ class Artemis::Reports::DPath::Mason {
                 $file = "/$file" unless $file =~ m(^/);
 
                 my $outbuf;
-                my $interp = new HTML::Mason::Interp( use_object_files => 0,
-                                                      out_method       => \$outbuf );
+                my $interp = new HTML::Mason::Interp(
+                                                     use_object_files => 1,
+                                                     comp_root => cwd(),
+                                                     out_method       => \$outbuf,
+                                                    );
                 $interp->exec($file);
                 return $outbuf;
         }
