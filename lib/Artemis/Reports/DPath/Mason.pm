@@ -12,7 +12,7 @@ class Artemis::Reports::DPath::Mason {
                 return $self->render_template ($template) if $template;
         }
         method render_template ($template) {
-                say "template: $template";
+                #say "template: $template";
                 my $outbuf;
                 my $interp = new HTML::Mason::Interp
                     (
@@ -40,7 +40,11 @@ class Artemis::Reports::DPath::Mason {
                                                      comp_root => cwd(),
                                                      out_method       => \$outbuf,
                                                     );
-                $interp->exec($file);
+                eval { $interp->exec($file) };
+                if ($@) {
+                        print STDERR "Artemis::Reports::DPath::Mason::render_file: ".$@;
+                        return '';
+                }
                 return $outbuf;
         }
 }
