@@ -20,14 +20,14 @@ class Artemis::Reports::DPath::Mason {
                      comp_root => cwd(),
                      out_method => \$outbuf,
                     );
-                my $anon_comp = eval { $interp->make_component( comp_source => $template ) };
-                die "eval error: ".$@ if $@;
-                my $m = new HTML::Mason::Request( interp     => $interp,
-                                                  comp       => $anon_comp,
-                                                  out_method => \$outbuf,
-                                                );
-                print STDERR Dumper($m);
-                $m->comp($anon_comp);
+                #my $anon_comp = eval { $interp->make_component( comp_source => $template ) };
+                my $anon_comp = eval { $interp->make_component(comp_source => $template, name => '/temporary/template/for/artemis_reports_dpath_mason') };
+                if ($@) {
+                        print STDERR "Artemis::Reports::DPath::Mason::render_template: ".$@;
+                        return '';
+                }
+                $interp->exec($anon_comp);
+                return $outbuf;
         }
 
         method render_file ($file) {
