@@ -13,7 +13,7 @@ use Test::Fixture::DBIC::Schema;
 use Data::Dumper;
 
 print "TAP Version 13\n";
-plan tests => 2;
+plan tests => 4;
 
 # -------------------- path division --------------------
 
@@ -30,9 +30,13 @@ use Cwd 'abs_path', 'cwd';
 
 
 # component paths look (and must be) absolute, but are always taken relative to comp_root
-like($mason->render(file     => "/t/helloworld.mas"), qr/Hello, world!\s*/, "mason hello world file");
-SKIP: {
-        skip "bummer!", 1;
-        like($mason->render(template => "foo <% 'bar' %> baz"), qr/foo bar baz\s*/, "mason hello world template");
-}
-#$mason->render(template => "SOME_TEMPLATE");
+like($mason->render(file     => "/t/helloworld.mas"),   qr/Hello, world!\s*/, "mason hello world file");
+is(  $mason->render(template => "SOME_TEMPLATE"),       "SOME_TEMPLATE",      "mason stupid template");
+like($mason->render(template => "foo <% 'bar' %> baz"), qr/foo bar baz\s*/,   "mason template with static content tags");
+$template = q{
+% my $bar = 'hello affe zomtec';
+foo <% $bar %> baz
+};
+is($mason->render(template => $template), "
+foo hello affe zomtec baz
+", "mason template with variables 1");
