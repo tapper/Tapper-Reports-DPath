@@ -56,7 +56,7 @@ class Artemis::Reports::DPath {
                       %condition
                      },
                      {
-                      order_by  => 'me.id desc',
+                      order_by  => 'me.id asc',
                       join      => [ 'suite', ],
                       '+select' => [ 'suite.name', ],
                       '+as'     => [ 'suite.name', ]
