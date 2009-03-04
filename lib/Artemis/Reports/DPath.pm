@@ -12,8 +12,8 @@ class Artemis::Reports::DPath {
         use Data::DPath::Path;
         use Data::Dumper;
         use TAP::DOM;
-        use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search', 'rds' ],
-                                      groups  => { all  => [ 'reports_dpath_search', 'rds' ] },
+        use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search', 'rds', 'reportdata' ],
+                                      groups  => { all  => [ 'reports_dpath_search', 'rds', 'reportdata' ] },
                                     };
 
         sub _extract_condition_and_part {
@@ -25,6 +25,9 @@ class Artemis::Reports::DPath {
 
         # better use alias
         sub rds($) { reports_dpath_search(@_) }
+
+        # better use alias
+        sub reportdata($) { reports_dpath_search(@_) }
 
         # allow trivial better readable column names
         # - foo => 23           ... mapped to "me.foo" => 23
@@ -143,6 +146,10 @@ Takes an extended DPath expression, applies it to an Artemis TAP::DOM
 structure and returns the matching results in an array.
 
 =head2 rds
+
+Alias for reports_dpath_search.
+
+=head2 reportdata
 
 Alias for reports_dpath_search.
 
