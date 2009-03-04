@@ -63,7 +63,7 @@ class Artemis::Reports::DPath {
                      }
                     );
                 my @rows = $rs->all;
-                my @data = map { as_data($_) } @rows;
+                my @data = map { _as_data($_) } @rows;
                 return map { $dpath->match ($_) } @data;
         }
 
@@ -72,7 +72,7 @@ class Artemis::Reports::DPath {
                 return eval "12345";
         }
 
-        sub as_data
+        sub _as_data
         {
                 my ($report) = @_;
 
@@ -84,12 +84,12 @@ class Artemis::Reports::DPath {
                                               created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
                                               created_at_ymd     => $report->created_at->ymd('-'),
                                              },
-                                   results => get_tapdom($report),
+                                   results => _get_tapdom($report),
                                   };
                 return $simple_hash;
         }
 
-        sub get_tapdom
+        sub _get_tapdom
         {
                 my ($report) = @_;
 
