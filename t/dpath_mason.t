@@ -13,7 +13,7 @@ use Test::Fixture::DBIC::Schema;
 use Data::Dumper;
 
 print "TAP Version 13\n";
-plan tests => 4;
+plan tests => 5;
 
 # -------------------- path division --------------------
 
@@ -37,6 +37,23 @@ $template = q{
 % my $bar = 'hello affe zomtec';
 foo <% $bar %> baz
 };
-is($mason->render(template => $template), "
+$expected = q{
 foo hello affe zomtec baz
-", "mason template with variables 1");
+};
+is($mason->render(template => $template), $expected, "mason template with variables 1");
+
+$template = q|
+% my @res = reportdata '{ "suite.name" => "perfmon" }//tap/tests_planned';
+Planned tests:
+% foreach (@res) {
+  <% $_ %>
+% }
+|;
+$expected = q|
+Planned tests:
+  4
+  3
+  4
+  3
+|;
+is($mason->render(template => $template), $expected, "mason template with dpath perfmon tests_planned");
