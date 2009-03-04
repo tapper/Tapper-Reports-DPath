@@ -59,7 +59,7 @@ class Artemis::Reports::DPath {
                       order_by  => 'me.id asc',
                       join      => [ 'suite', ],
                       '+select' => [ 'suite.name', ],
-                      '+as'     => [ 'suite.name', ]
+                      '+as'     => [ 'suite.name', ],
                      }
                     );
                 my @rows = $rs->all;
