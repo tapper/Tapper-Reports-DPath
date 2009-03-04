@@ -6,6 +6,7 @@ class Artemis::Reports::DPath::Mason {
         use HTML::Mason;
         use Cwd 'cwd';
         use Data::Dumper;
+        use File::ShareDir 'module_file';
 
         method render (:$file?, :$template?) {
                 return $self->render_file     ($file)     if $file;
@@ -14,14 +15,22 @@ class Artemis::Reports::DPath::Mason {
         method render_template ($template) {
                 #say "template: $template";
                 my $outbuf;
+                my $incfile = module_file('Artemis::Reports::DPath::Mason', 'mason_include.pl');
                 my $interp = new HTML::Mason::Interp
                     (
                      use_object_files => 1,
-                     comp_root => cwd(),
-                     out_method => \$outbuf,
+                     #comp_root        => cwd(),
+                     comp_root        => '/',
+                     out_method       => \$outbuf,
+                     preloads         => [ $incfile ],
                     );
-                #my $anon_comp = eval { $interp->make_component( comp_source => $template ) };
-                my $anon_comp = eval { $interp->make_component(comp_source => $template, name => '/temporary/template/for/artemis_reports_dpath_mason') };
+                my $anon_comp = eval {
+                        $interp->make_component
+                            (
+                             comp_source => $template,
+                             name        => '/virtual/artemis_reports_dpath_mason',
+                            );
+                };
                 if ($@) {
                         print STDERR "Artemis::Reports::DPath::Mason::render_template: ".$@;
                         return '';
