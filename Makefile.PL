@@ -14,7 +14,7 @@ requires 'B::Hooks::EndOfScope' => '0.05';
 requires 'Artemis::Config';
 requires 'Artemis::Schema';
 requires 'File::ShareDir';
-requires 'Data::DPath';
+requires 'Data::DPath'          => '0.10';
 
 build_requires 'Test::More';
 build_requires 'Artemis::Schema::TestTools';

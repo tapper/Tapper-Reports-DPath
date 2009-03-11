@@ -4,8 +4,6 @@ use 5.010;
 
 class Artemis::Reports::DPath {
 
-        our $VERSION = '0.01';
-
         use Artemis::Model 'model';
         use Text::Balanced 'extract_codeblock';
         use Artemis::TAP::Harness;
@@ -108,6 +106,9 @@ class Artemis::Reports::DPath {
                 return \@tapdata;
         }
 }
+
+package Artemis::Reports::DPath;
+our $VERSION = '2.010004';
 
 1;
 
