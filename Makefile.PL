@@ -12,7 +12,7 @@ requires 'parent'               => 0;
 requires 'HTML::Mason'          => "1.40";
 requires 'B::Hooks::EndOfScope' => '0.05';
 requires 'Artemis::Config';
-requires 'Artemis::Schema';
+requires 'Artemis::Schema'      => '2.010031';
 requires 'File::ShareDir';
 requires 'Data::DPath'          => '0.10';
 

@@ -93,7 +93,7 @@ class Artemis::Reports::DPath {
 
                 my $TAPVERSION = "TAP Version 13";
                 my @tapdata = ();
-                if (not $report->tapdata) {
+                if (not $report->tapdom) {
                         my $harness = new Artemis::TAP::Harness( tap => $report->tap );
                         $harness->evaluate_report();
                         foreach (@{$harness->parsed_report->{tap_sections}}) {
@@ -108,7 +108,7 @@ class Artemis::Reports::DPath {
 }
 
 package Artemis::Reports::DPath;
-our $VERSION = '2.010004';
+our $VERSION = '2.010005';
 
 1;
 
