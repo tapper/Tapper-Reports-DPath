@@ -30,7 +30,7 @@ is( reportsdb_schema->resultset('Report')->count, 3,  "report count" );
 
 my $report      = reportsdb_schema->resultset('Report')->find(23);
 #print STDERR Dumper($report->tap);
-my $tapdom = Artemis::Reports::DPath::_get_tapdom($report);
+my $tapdom = $report->_get_cached_tapdom;
 #print STDERR Dumper($tapdom);
 is ($tapdom->[0]{section}{'section-000'}{tap}{tests_planned}, 4, "parsed tap - section 0 - tests_planned");
 is ($tapdom->[1]{section}{'section-001'}{tap}{tests_planned}, 3, "parsed tap - section 1 - tests_planned");
