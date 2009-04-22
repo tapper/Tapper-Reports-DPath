@@ -8,8 +8,10 @@ class Artemis::Reports::DPath::Mason {
         use Data::Dumper;
         use File::ShareDir 'module_dir';
 
+        has debug => ( is => 'rw');
+
         method render (:$file?, :$template?) {
-                return $self->render_file     ($file)     if $file;
+                return $self->render_file     ($file) if $file;
                 return $self->render_template ($template) if $template;
         }
         method render_template ($template) {
@@ -31,7 +33,9 @@ class Artemis::Reports::DPath::Mason {
                             );
                 };
                 if ($@) {
-                        print STDERR "Artemis::Reports::DPath::Mason::render_template: ".$@;
+                        my $msg = "Artemis::Reports::DPath::Mason::render_template: ".$@;
+                        print STDERR $msg;
+                        return $msg if $self->debug;
                         return '';
                 }
                 $interp->exec($anon_comp);

@@ -81,7 +81,7 @@ class Artemis::Reports::DPath {
                                               created_at_ymd     => $report->created_at->ymd('-'),
                                              },
                                    #results => _get_tapdom($report),
-                                   results => $report->_get_cached_tapdom,
+                                   results => $report->get_cached_tapdom,
                                   };
                 return $simple_hash;
         }
@@ -89,7 +89,7 @@ class Artemis::Reports::DPath {
 }
 
 package Artemis::Reports::DPath;
-our $VERSION = '2.010005';
+our $VERSION = '2.010006';
 
 1;
 
