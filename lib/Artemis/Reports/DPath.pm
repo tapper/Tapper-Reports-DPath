@@ -6,10 +6,8 @@ class Artemis::Reports::DPath {
 
         use Artemis::Model 'model';
         use Text::Balanced 'extract_codeblock';
-        use Artemis::TAP::Harness;
         use Data::DPath::Path;
         use Data::Dumper;
-        use TAP::DOM;
         use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search', 'rds', 'reportdata' ],
                                       groups  => { all  => [ 'reports_dpath_search', 'rds', 'reportdata' ] },
                                     };
@@ -82,29 +80,12 @@ class Artemis::Reports::DPath {
                                               created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
                                               created_at_ymd     => $report->created_at->ymd('-'),
                                              },
-                                   results => _get_tapdom($report),
+                                   #results => _get_tapdom($report),
+                                   results => $report->_get_cached_tapdom,
                                   };
                 return $simple_hash;
         }
 
-        sub _get_tapdom
-        {
-                my ($report) = @_;
-
-                my $TAPVERSION = "TAP Version 13";
-                my @tapdata = ();
-                if (not $report->tapdom) {
-                        my $harness = new Artemis::TAP::Harness( tap => $report->tap );
-                        $harness->evaluate_report();
-                        foreach (@{$harness->parsed_report->{tap_sections}}) {
-                                my $rawtap = $_->{raw};
-                                $rawtap = $TAPVERSION."\n".$rawtap unless $rawtap =~ /^TAP Version/ms;
-                                my $tapdata = new TAP::DOM ( tap => $rawtap );
-                                push @tapdata, { section => { $_->{section_name} => { tap => $tapdata }}};
-                        }
-                }
-                return \@tapdata;
-        }
 }
 
 package Artemis::Reports::DPath;
@@ -143,8 +124,8 @@ the DB.
 
 =head2 reports_dpath_search
 
-Takes an extended DPath expression, applies it to an Artemis TAP::DOM
-structure and returns the matching results in an array.
+Takes an extended DPath expression, applies it to an Artemis Reports
+with TAP::DOM structure and returns the matching results in an array.
 
 =head2 rds
 
