@@ -15,8 +15,6 @@ class Artemis::Reports::DPath::Mason {
                 return $self->render_template ($template) if $template;
         }
         method render_template ($template) {
-                say STDERR "render_template: $template";
-                say STDERR "render_template: Perl: $] $^X";
                 my $outbuf;
                 my $comp_root = module_dir('Artemis::Reports::DPath::Mason');
                 my $interp = new HTML::Mason::Interp
@@ -52,8 +50,6 @@ class Artemis::Reports::DPath::Mason {
         }
 
         method render_file ($file) {
-                say STDERR "render_file: $file";
-                say STDERR "render_file: Perl: $] $^X";
 
                 # must be absolute to mason, although meant relative in real world
                 $file = "/$file" unless $file =~ m(^/);
