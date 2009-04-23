@@ -15,7 +15,8 @@ class Artemis::Reports::DPath::Mason {
                 return $self->render_template ($template) if $template;
         }
         method render_template ($template) {
-                #say "template: $template";
+                say STDERR "render_template: $template";
+                say STDERR "render_template: Perl: $] $^X";
                 my $outbuf;
                 my $comp_root = module_dir('Artemis::Reports::DPath::Mason');
                 my $interp = new HTML::Mason::Interp
