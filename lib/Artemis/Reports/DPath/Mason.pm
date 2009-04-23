@@ -33,28 +33,50 @@ class Artemis::Reports::DPath::Mason {
                             );
                 };
                 if ($@) {
-                        my $msg = "Artemis::Reports::DPath::Mason::render_template: ".$@;
+                        my $msg = "Artemis::Reports::DPath::Mason::render_template::make_component: ".$@;
                         print STDERR $msg;
                         return $msg if $self->debug;
                         return '';
                 }
-                $interp->exec($anon_comp);
+                eval {
+                        $interp->exec($anon_comp);
+                };
+                if ($@) {
+                        my $msg = "Artemis::Reports::DPath::Mason::render_template::exec(anon_comp): ".$@;
+                        print STDERR $msg;
+                        return $msg if $self->debug;
+                        return '';
+                }
                 return $outbuf;
         }
 
         method render_file ($file) {
+                say STDERR "render_file: $file";
+                say STDERR "render_file: Perl: $] $^X";
+
                 # must be absolute to mason, although meant relative in real world
                 $file = "/$file" unless $file =~ m(^/);
 
                 my $outbuf;
-                my $interp = new HTML::Mason::Interp(
-                                                     use_object_files => 1,
-                                                     comp_root => cwd(),
-                                                     out_method       => \$outbuf,
-                                                    );
+                my $interp;
+                eval {
+                        $interp = new HTML::Mason::Interp(
+                                                          use_object_files => 1,
+                                                          comp_root => cwd(),
+                                                          out_method       => \$outbuf,
+                                                         );
+                };
+                if ($@) {
+                        my $msg = "Artemis::Reports::DPath::Mason::render_file::new_Interp: ".$@;
+                        print STDERR $msg;
+                        return $msg if $self->debug;
+                        return '';
+                }
                 eval { $interp->exec($file) };
                 if ($@) {
-                        print STDERR "Artemis::Reports::DPath::Mason::render_file: ".$@;
+                        my $msg = "Artemis::Reports::DPath::Mason::render_file::exec(file): ".$@;
+                        print STDERR $msg;
+                        return $msg if $self->debug;
                         return '';
                 }
                 return $outbuf;
