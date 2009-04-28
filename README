@@ -1,0 +1,41 @@
+NAME
+    Artemis::Reports::DPath - Extended DPath access to Artemis reports.
+
+SYNOPSIS
+        use Artemis::Reports::DPath 'reports_dpath_search';
+        # the first bogomips entry of math sections:
+        @resultlist = reports_dpath_search(
+                         '{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]'
+                      );
+        # all report IDs of suite_id 17 that FAILed:
+        @resultlist = reports_dpath_search(
+                         '{ suite_name => "TestSuite-LmBench" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id'
+                      );
+
+    This searches all reports of the test suite "TestSuite-LmBench" and
+    furthermore in them for a TAP section "math" with the particular subtest
+    "bogomips" and takes the first array entry of them.
+
+    The part before the '::' selects reports to search in a DBIx::Class
+    search query, the second part is a normal Data::DPath expression that
+    matches against the datastructure that is build from the DB.
+
+METHODS and FUNCTIONS
+  reports_dpath_search
+    Takes an extended DPath expression, applies it to an Artemis TAP::DOM
+    structure and returns the matching results in an array.
+
+  rds
+    Alias for reports_dpath_search.
+
+  reportdata
+    Alias for reports_dpath_search.
+
+AUTHOR
+    OSRC SysInt Team, "<osrc-sysint at elbe.amd.com>"
+
+COPYRIGHT & LICENSE
+    Copyright 2008 OSRC SysInt Team, all rights reserved.
+
+    This program is released under the following license: proprietary
+
