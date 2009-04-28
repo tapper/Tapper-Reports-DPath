@@ -22,8 +22,8 @@ SYNOPSIS
 
 METHODS and FUNCTIONS
   reports_dpath_search
-    Takes an extended DPath expression, applies it to an Artemis TAP::DOM
-    structure and returns the matching results in an array.
+    Takes an extended DPath expression, applies it to an Artemis Reports
+    with TAP::DOM structure and returns the matching results in an array.
 
   rds
     Alias for reports_dpath_search.
