@@ -89,7 +89,7 @@ class Artemis::Reports::DPath {
 }
 
 package Artemis::Reports::DPath;
-our $VERSION = '2.010007';
+our $VERSION = '2.010008';
 
 1;
 
