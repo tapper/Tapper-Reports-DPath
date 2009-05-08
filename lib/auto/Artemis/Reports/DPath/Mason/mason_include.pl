@@ -1,1 +1,2 @@
-% use Artemis::Reports::DPath 'reports_dpath_search', 'rds', 'reportdata';
+% use Artemis::Reports::DPath 'reportdata';
+% use Data::Dumper;
