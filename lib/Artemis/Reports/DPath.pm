@@ -53,14 +53,19 @@ class Artemis::Reports::DPath {
                      },
                      {
                       order_by  => 'me.id asc',
-                      join      => [ 'suite', ],
+                      join      => [ 'suite',      ],
                       '+select' => [ 'suite.name', ],
                       '+as'     => [ 'suite.name', ],
                      }
                     );
-                my @rows = $rs->all;
-                my @data = map { _as_data($_) } @rows;
-                return map { $dpath->match ($_) } @data;
+                my @res = ();
+                while (my $row = $rs->next)
+                {
+                        my $data = _as_data($row);
+                        my @row_res  = $dpath->match ($data);
+                        push @res, @row_res;
+                }
+                return @res;
         }
 
         sub _dummy_needed_for_tests {
@@ -88,7 +93,7 @@ class Artemis::Reports::DPath {
 }
 
 package Artemis::Reports::DPath;
-our $VERSION = '2.010008';
+our $VERSION = '2.010009';
 
 1;
 
