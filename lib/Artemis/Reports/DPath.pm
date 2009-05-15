@@ -8,8 +8,8 @@ class Artemis::Reports::DPath {
         use Text::Balanced 'extract_codeblock';
         use Data::DPath::Path;
         use Data::Dumper;
-        use Sub::Exporter -setup => { exports =>           [ 'reports_dpath_search', 'rds', 'reportdata' ],
-                                      groups  => { all  => [ 'reports_dpath_search', 'rds', 'reportdata' ] },
+        use Sub::Exporter -setup => { exports =>           [ 'reportdata' ],
+                                      groups  => { all  => [ 'reportdata' ] },
                                     };
 
         sub _extract_condition_and_part {
@@ -80,7 +80,6 @@ class Artemis::Reports::DPath {
                                               created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
                                               created_at_ymd     => $report->created_at->ymd('-'),
                                              },
-                                   #results => _get_tapdom($report),
                                    results => $report->get_cached_tapdom,
                                   };
                 return $simple_hash;

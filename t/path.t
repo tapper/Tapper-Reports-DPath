@@ -6,7 +6,7 @@ BEGIN {
         use Class::C3;
         use MRO::Compat;
 }
-use Artemis::Reports::DPath 'reports_dpath_search', 'rds';
+use Artemis::Reports::DPath;
 use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Data::Dumper;

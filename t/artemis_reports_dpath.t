@@ -6,7 +6,7 @@ BEGIN {
         use Class::C3;
         use MRO::Compat;
 }
-use Artemis::Reports::DPath 'reports_dpath_search', 'rds';
+use Artemis::Reports::DPath 'reportdata';
 use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Data::Dumper;
@@ -39,7 +39,7 @@ my $report_data = Artemis::Reports::DPath::_as_data($report);
 is ($report_data->{results}[0]{section}{'section-000'}{tap}{tests_planned}, 4, "full report - section 0 - tests_planned");
 is ($report_data->{results}[1]{section}{'section-001'}{tap}{tests_planned}, 3, "full report - section 1 - tests_planned");
 
-@res = rds '{}:://tap/tests_planned';
+@res = reportdata '{}:://tap/tests_planned';
 is(scalar @res, 4,  "count ALL plans including sections - empty braces" );
 print "  ---\n";
 print "  foo: bar\n";
@@ -76,32 +76,32 @@ suite_name => "perfmon" }'), '{ "me.id" => 23,
 
 # -------------------- get by paths --------------------
 
-@res = rds '//tap/tests_planned';
+@res = reportdata '//tap/tests_planned';
 is(scalar @res, 4,  "count ALL plans including sections - no braces" );
 
-@res = rds '{ "report.id" => 23 }:://tap/tests_planned';
+@res = reportdata '{ "report.id" => 23 }:://tap/tests_planned';
 is(scalar @res, 2,  "id + dpath - all sections" );
 
-@res = rds '{ id => 23 }:://section-000/tap/tests_planned';
+@res = reportdata '{ id => 23 }:://section-000/tap/tests_planned';
 is(scalar @res, 1,  "id + dpath - section 0" );
 is($res[0], 4,  "id + dpath - section 0 tests_planned" );
 
-@res = rds '{ id => 23 }:://section-001/tap/tests_planned';
+@res = reportdata '{ id => 23 }:://section-001/tap/tests_planned';
 is(scalar @res, 1,  "id + dpath - section 1" );
 is($res[0], 3,  "id + dpath - section 1 tests_planned" );
 
-@res = rds '{ "suite.name" => "perfmon" }//tap/tests_planned';
+@res = reportdata '{ "suite.name" => "perfmon" }//tap/tests_planned';
 is(scalar @res, 4,  "count ALL plans of suite perfmon" );
 
-@res = rds '{ "suite.name" => "perfmon", "suite_version" => "1.03" }//tap/tests_planned';
+@res = reportdata '{ "suite.name" => "perfmon", "suite_version" => "1.03" }//tap/tests_planned';
 is(scalar @res, 2,  "count plans of suite perfmon 1.03" );
 
-@res = rds '{ "suite.name" => "perfmon", "suite_version" => "1.02" }//tap/tests_planned';
+@res = reportdata '{ "suite.name" => "perfmon", "suite_version" => "1.02" }//tap/tests_planned';
 is(scalar @res, 1,  "count plans of suite perfmon 1.02" );
 
-@res = rds '{ suite_name => "perfmon", "suite_version" => "1.03" }//tap/tests_planned';
+@res = reportdata '{ suite_name => "perfmon", "suite_version" => "1.03" }//tap/tests_planned';
 is(scalar @res, 2,  "count plans of suite perfmon 1.03" );
 
-@res = rds '{ "suite_name" => "perfmon", "suite_version" => "1.03" }//tap/tests_planned';
+@res = reportdata '{ "suite_name" => "perfmon", "suite_version" => "1.03" }//tap/tests_planned';
 is(scalar @res, 2,  "count plans of suite perfmon 1.03" );
 
