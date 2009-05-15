@@ -2,7 +2,7 @@ use MooseX::Declare;
 
 use 5.010;
 
-class Artemis::Reports::DPath {
+class Artemis::Reports::DPath is dirty {
 
         use Artemis::Model 'model';
         use Text::Balanced 'extract_codeblock';
@@ -93,7 +93,7 @@ class Artemis::Reports::DPath {
 }
 
 package Artemis::Reports::DPath;
-our $VERSION = '2.010009';
+our $VERSION = '2.010010';
 
 1;
 
@@ -107,11 +107,11 @@ Artemis::Reports::DPath - Extended DPath access to Artemis reports.
 
     use Artemis::Reports::DPath 'reports_dpath_search';
     # the first bogomips entry of math sections:
-    @resultlist = reports_dpath_search(
+    @resultlist = reportdata (
                      '{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]'
                   );
     # all report IDs of suite_id 17 that FAILed:
-    @resultlist = reports_dpath_search(
+    @resultlist = reportdata (
                      '{ suite_name => "TestSuite-LmBench" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id'
                   );
 

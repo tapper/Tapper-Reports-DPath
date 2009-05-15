@@ -10,11 +10,11 @@ author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
 requires 'perl'                  => 5.010;
 requires 'parent'                => 0;
 requires 'HTML::Mason'           => "1.40";
-requires 'Data::DPath'           => '0.10';
+requires 'Data::DPath'           => '0.11';
 requires 'File::ShareDir'        => 0;
 requires 'Artemis::Config'       => 0;
 requires 'Artemis::Schema'       => '2.010034';
-requires 'B::Hooks::EndOfScope'  => '0.05';
+requires 'Sub::Exporter'         => '0.982';
 
 build_requires 'Test::More';
 build_requires 'Artemis::Schema::TestTools';
