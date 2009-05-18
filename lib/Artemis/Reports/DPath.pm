@@ -53,6 +53,33 @@ class Artemis::Reports::DPath is dirty {
                      },
                      {
                       order_by  => 'me.id asc',
+                      columns   => [ qw(
+                                               id
+                                               suite_id
+                                               suite_version
+                                               reportername
+                                               peeraddr
+                                               peerport
+                                               peerhost
+                                               successgrade
+                                               reviewed_successgrade
+                                               total
+                                               failed
+                                               parse_errors
+                                               passed
+                                               skipped
+                                               todo
+                                               todo_passed
+                                               wait
+                                               exit
+                                               success_ratio
+                                               starttime_test_program
+                                               endtime_test_program
+                                               machine_name
+                                               machine_description
+                                               created_at
+                                               updated_at
+                                      )],
                       join      => [ 'suite',      ],
                       '+select' => [ 'suite.name', ],
                       '+as'     => [ 'suite.name', ],
@@ -93,7 +120,7 @@ class Artemis::Reports::DPath is dirty {
 }
 
 package Artemis::Reports::DPath;
-our $VERSION = '2.010010';
+our $VERSION = '2.010012';
 
 1;
 
