@@ -29,12 +29,13 @@ class Artemis::Reports::DPath is dirty {
         # - foo => 23           ... mapped to "me.foo" => 23
         # - "report.foo" => 23  ... mapped to "me.foo" => 23
         # - suite_name => "bar" ... mapped to "suite.name" => "bar"
+        # - -and => ...         ... mapped to "-and" => ...
         sub _fix_condition
         {
                 no warnings 'uninitialized';
                 my ($condition) = @_;
                 $condition      =~ s/(['"])?\bsuite_name\b(['"])?\s*=>/"suite.name" =>/;        # ';
-                $condition      =~ s/(\W)(['"])?((report|me)\.)?(?<!suite\.)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
+                $condition      =~ s/([^-\w])(['"])?((report|me)\.)?(?<!suite\.)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
                 return $condition;
 
         }
