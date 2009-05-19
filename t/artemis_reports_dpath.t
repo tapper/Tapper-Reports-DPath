@@ -10,9 +10,10 @@ use Artemis::Reports::DPath 'reportdata';
 use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Data::Dumper;
+use Test::NoWarnings;
 
 print "TAP Version 13\n";
-plan tests => 29;
+plan tests => 31;
 
 # -------------------- path division --------------------
 
@@ -53,6 +54,7 @@ is(Artemis::Reports::DPath::_fix_condition('{ id => 23 }'),          '{ "me.id" 
 is(Artemis::Reports::DPath::_fix_condition('{ "id" => 23 }'),        '{ "me.id" => 23 }', "allow easier report.id column 2");
 is(Artemis::Reports::DPath::_fix_condition('{ "me.id" => 23 }'),     '{ "me.id" => 23 }', "allow easier report.id column 3");
 is(Artemis::Reports::DPath::_fix_condition('{ "report.id" => 23 }'), '{ "me.id" => 23 }', "allow easier report.id column 4");
+is(Artemis::Reports::DPath::_fix_condition('{ -and => 23 }'),        '{ -and => 23 }',    "allow easier report.id column 5");
 
 # multi
 is(Artemis::Reports::DPath::_fix_condition('{ id => 23, suite_name => "perfmon" }'),          '{ "me.id" => 23, "suite.name" => "perfmon" }', "allow easier report.id column 1");
