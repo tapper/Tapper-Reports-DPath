@@ -122,7 +122,7 @@ class Artemis::Reports::DPath is dirty {
 }
 
 package Artemis::Reports::DPath;
-our $VERSION = '2.010012';
+our $VERSION = '2.010013';
 
 1;
 
