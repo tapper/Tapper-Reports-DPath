@@ -46,6 +46,11 @@ class Artemis::Reports::DPath is dirty {
 
         # ----- cache complete Artemis::Reports::DPath queries -----
 
+        sub _cachekey_whole_dpath {
+                my ($reports_path) = @_;
+                ($ENV{ARTEMIS_DEVELOPMENT} || "0") . '::' . $reports_path;
+        }
+
         sub cache_whole_dpath  {
                 my ($reports_path, $rs_count, $res) = @_;
 
@@ -56,10 +61,11 @@ class Artemis::Reports::DPath is dirty {
                 # we cache on the dpath
                 # but need count to verify and maintain cache validity
 
-                $cache->set( $reports_path, {
-                                             count => $rs_count,
-                                             res   => $res,
-                                            });
+                $cache->set( _cachekey_whole_dpath($reports_path),
+                             {
+                              count => $rs_count,
+                              res   => $res,
+                             });
         }
 
         sub cached_whole_dpath {
@@ -82,7 +88,7 @@ class Artemis::Reports::DPath is dirty {
 
         sub _cachekey_single_dpath {
                 my ($path, $reports_id) = @_;
-                $reports_id."::".$path;
+                ($ENV{ARTEMIS_DEVELOPMENT} || "0") . '::' . $reports_id."::".$path;
         }
 
         sub cache_single_dpath {
