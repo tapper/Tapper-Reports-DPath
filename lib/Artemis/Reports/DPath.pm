@@ -49,6 +49,8 @@ class Artemis::Reports::DPath is dirty {
         sub cache_whole_dpath  {
                 my ($reports_path, $rs_count, $res) = @_;
 
+                return if $ENV{HARNESS_ACTIVE};
+
                 my $cache = new Cache::FileCache;
 
                 # we cache on the dpath
@@ -62,6 +64,8 @@ class Artemis::Reports::DPath is dirty {
 
         sub cached_whole_dpath {
                 my ($reports_path, $rs_count) = @_;
+
+                return if $ENV{HARNESS_ACTIVE};
 
                 my $cache      = new Cache::FileCache;
                 my $cached_res = $cache->get( $reports_path );
@@ -84,6 +88,8 @@ class Artemis::Reports::DPath is dirty {
         sub cache_single_dpath {
                 my ($path, $reports_id, $res) = @_;
 
+                return if $ENV{HARNESS_ACTIVE};
+
                 my $cache = new Cache::FileCache;
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
                              $res
@@ -92,6 +98,8 @@ class Artemis::Reports::DPath is dirty {
 
         sub cached_single_dpath {
                 my ($path, $reports_id) = @_;
+
+                return if $ENV{HARNESS_ACTIVE};
 
                 my $cache      = new Cache::FileCache;
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
