@@ -115,7 +115,7 @@ class Artemis::Reports::DPath is dirty {
                 my ($condition, $path) = _extract_condition_and_part($reports_path);
                 my $dpath              = new Data::DPath::Path( path => $path );
                 $condition             = _fix_condition($condition);
-                say STDERR "condition: ".($condition || '');
+                #say STDERR "condition: ".($condition || '');
                 my %condition          = $condition ? %{ eval $condition } : ();
                 my $rs = model('ReportsDB')->resultset('Report')->search
                     (
