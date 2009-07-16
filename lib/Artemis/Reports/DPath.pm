@@ -74,7 +74,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache      = new Cache::FileCache;
-                my $cached_res = $cache->get( $reports_path );
+                my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
                 return undef              if not defined $cached_res;
                 return $cached_res->{res} if $cached_res->{count} == $rs_count;
