@@ -79,10 +79,10 @@ class Artemis::Reports::DPath is dirty {
                 my $cache      = new Cache::FileCache;
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
-                say STDERR "  <- get whole: $reports_path ($rs_count vs. ".Dumper($cached_res).")";
+                say STDERR "  <- get whole: $reports_path ($rs_count vs. ".($cached_res->{count}||'').")";
                 return undef              if not defined $cached_res;
 
-                if ($cached_res->{count} == $rs_count) {
+                if ($cached_res->{count} and $cached_res->{count} == $rs_count) {
                         say STDERR "  Gotcha!";
                         return $cached_res->{res}
                 }
@@ -107,7 +107,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache = new Cache::FileCache;
-                #say STDERR "  -> set single: $reports_id -- $path";
+                say STDERR "  -> set single: $reports_id -- $path";
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
                              $res
                            );
@@ -121,7 +121,7 @@ class Artemis::Reports::DPath is dirty {
                 my $cache      = new Cache::FileCache;
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
 
-                say STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
+                print STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
                 return $cached_res;
         }
 
