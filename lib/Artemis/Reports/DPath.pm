@@ -48,7 +48,9 @@ class Artemis::Reports::DPath is dirty {
 
         sub _cachekey_whole_dpath {
                 my ($reports_path) = @_;
-                ($ENV{ARTEMIS_DEVELOPMENT} || "0") . '::' . $reports_path;
+                my $key = ($ENV{ARTEMIS_DEVELOPMENT} || "0") . '::' . $reports_path;
+                #say STDERR "  . $key";
+                return $key;
         }
 
         sub cache_whole_dpath  {
@@ -61,6 +63,7 @@ class Artemis::Reports::DPath is dirty {
                 # we cache on the dpath
                 # but need count to verify and maintain cache validity
 
+                say STDERR "  -> set whole: $reports_path ($rs_count)";
                 $cache->set( _cachekey_whole_dpath($reports_path),
                              {
                               count => $rs_count,
@@ -76,9 +79,14 @@ class Artemis::Reports::DPath is dirty {
                 my $cache      = new Cache::FileCache;
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
+                say STDERR "  <- get whole: $reports_path ($rs_count vs. ".Dumper($cached_res).")";
                 return undef              if not defined $cached_res;
-                return $cached_res->{res} if $cached_res->{count} == $rs_count;
 
+                if ($cached_res->{count} == $rs_count) {
+                        say STDERR "  Gotcha!";
+                        return $cached_res->{res}
+                }
+                
                 # clean up when matching report count changed
                 $cache->remove( $reports_path );
                 return undef;
@@ -88,7 +96,9 @@ class Artemis::Reports::DPath is dirty {
 
         sub _cachekey_single_dpath {
                 my ($path, $reports_id) = @_;
-                ($ENV{ARTEMIS_DEVELOPMENT} || "0") . '::' . $reports_id."::".$path;
+                my $key = ($ENV{ARTEMIS_DEVELOPMENT} || "0") . '::' . $reports_id."::".$path;
+                #say STDERR "  . $key";
+                return $key;
         }
 
         sub cache_single_dpath {
@@ -97,6 +107,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache = new Cache::FileCache;
+                #say STDERR "  -> set single: $reports_id -- $path";
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
                              $res
                            );
@@ -110,6 +121,7 @@ class Artemis::Reports::DPath is dirty {
                 my $cache      = new Cache::FileCache;
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
 
+                say STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
                 return $cached_res;
         }
 
