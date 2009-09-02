@@ -31,7 +31,7 @@ class Artemis::Reports::DPath is dirty {
         # - foo => 23           ... mapped to "me.foo" => 23
         # - "report.foo" => 23  ... mapped to "me.foo" => 23
         # - suite_name => "bar" ... mapped to "suite.name" => "bar"
-        # - -and => ...         ... mapped to "-and" => ...
+        # - -and => ...         ... mapped to "-and" => ...            # just to ensure that it doesn't produce: "me.-and" => ...
         sub _fix_condition
         {
                 no warnings 'uninitialized';
