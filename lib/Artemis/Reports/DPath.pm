@@ -86,7 +86,7 @@ class Artemis::Reports::DPath is dirty {
                         say STDERR "  Gotcha!";
                         return $cached_res->{res}
                 }
-                
+
                 # clean up when matching report count changed
                 $cache->remove( $reports_path );
                 return undef;
