@@ -211,6 +211,22 @@ class Artemis::Reports::DPath is dirty {
                 return eval "12345";
         }
 
+        sub _reportsection_meta {
+                my ($report) = @_;
+
+                my @reportsection_meta = ();
+                my $reportsections = $report->reportsections;
+                #say STDERR "REPORT_SECTIONS: ", Dumper($reportsections);
+                while (my $section = $reportsections->next) {
+                        push @reportsection_meta, {
+                                                   $section->name => {
+                                                                      $section->get_columns
+                                                                     }
+                                                  };
+                }
+                return \@reportsection_meta;
+        }
+
         sub _as_data
         {
                 my ($report) = @_;
@@ -223,6 +239,8 @@ class Artemis::Reports::DPath is dirty {
                                               created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
                                               created_at_ymd     => $report->created_at->ymd('-'),
                                              },
+                                   #reportsectionmeta => _reportsection_meta($report), # obsolete, all in parsed report
+                                   # groupcontext => ...
                                    results => $report->get_cached_tapdom,
                                   };
                 return $simple_hash;
