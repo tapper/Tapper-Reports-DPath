@@ -108,16 +108,16 @@ is(scalar @res, 2,  "count plans of suite perfmon 1.03" );
 
 # ------ context meta info ----
 $report      = reportsdb_schema->resultset('Report')->find(20);
-print STDERR Dumper($report->tap);
+#print STDERR Dumper($report->tap);
 $tapdom = $report->get_cached_tapdom;
-print STDERR Dumper($tapdom);
+#print STDERR Dumper($tapdom);
 is ($tapdom->[0]{section}{'Metainfo'}{tap}{tests_planned}, 2,                                 "parsed tap - section 0 - tests_planned");
 is ($tapdom->[1]{section}{'XEN-Metainfo'}{tap}{tests_planned}, 1,                             "parsed tap - section 1 - tests_planned");
 is ($tapdom->[2]{section}{'guest_1_suse_sles10_sp3_rc2_32b_smp_qcow'}{tap}{tests_planned}, 1, "parsed tap - section 2 - tests_planned");
 is ($tapdom->[3]{section}{'guest_2_opensuse_11_1_32b_qcow'}{tap}{tests_planned}, 1,           "parsed tap - section 3 - tests_planned");
 
 $report_data = Artemis::Reports::DPath::_as_data($report);
-#say STDERR "REPORT_DATA ".Dumper($report_data);
+say STDERR "REPORT_DATA ".Dumper($report_data);
 is ($report_data->{results}[0]{section}{'Metainfo'}{tap}{tests_planned}, 2,                                 "full report - section 0 - tests_planned");
 is ($report_data->{results}[1]{section}{'XEN-Metainfo'}{tap}{tests_planned}, 1,                             "full report - section 1 - tests_planned");
 is ($report_data->{results}[2]{section}{'guest_1_suse_sles10_sp3_rc2_32b_smp_qcow'}{tap}{tests_planned}, 1, "full report - section 2 - tests_planned");
