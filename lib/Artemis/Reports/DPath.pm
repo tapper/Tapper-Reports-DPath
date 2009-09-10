@@ -211,20 +211,51 @@ class Artemis::Reports::DPath is dirty {
                 return eval "12345";
         }
 
-        sub _reportsection_meta {
+        sub _groupcontext {
                 my ($report) = @_;
 
-                my @reportsection_meta = ();
-                my $reportsections = $report->reportsections;
-                #say STDERR "REPORT_SECTIONS: ", Dumper($reportsections);
-                while (my $section = $reportsections->next) {
-                        push @reportsection_meta, {
-                                                   $section->name => {
-                                                                      $section->get_columns
-                                                                     }
-                                                  };
+                my %groupcontext = ();
+                my $id = $report->id;
+                my %groupreports = (
+                                    arbitrary    => $report->reportgrouparbitrary ? scalar $report->reportgrouparbitrary->groupreports : undef,
+                                    arbitrary_id => $report->reportgrouparbitrary ?        $report->reportgrouparbitrary->arbitrary_id : undef,
+                                    testrun      => $report->reportgrouptestrun   ? scalar $report->reportgrouptestrun->groupreports   : undef,
+                                    testrun_id   => $report->reportgrouptestrun   ?        $report->reportgrouptestrun->testrun_id     : undef,
+                                   );
+
+                if ($report->reportgrouptestrun) {
+                        my $rgt_id = $report->reportgrouptestrun->testrun_id;
+                        my $rgt_reports = model('ReportsDB')->resultset('ReportgroupTestrun')->search({ testrun_id => $rgt_id});
+                        # say STDERR "\nrgt $rgt_id count: ", $rgt_reports->count;
                 }
-                return \@reportsection_meta;
+
+                foreach my $type (qw(arbitrary testrun))
+                {
+                        next unless $groupreports{$type};
+                        my $group_id = $groupreports{"${type}_id"};
+
+                        # say STDERR "${type}_id: ", $groupreports{"${type}_id"};
+                        # say STDERR "  groupreports{$type}.count: ",    $groupreports{$type}->count;
+                        while (my $r = $groupreports{$type}->next)
+                        {
+                                # say STDERR "  r.id: ", $r->id;
+                                my @reportsection_meta = ();
+                                my $reportsections = $report->reportsections;
+                                #say STDERR "REPORT_SECTIONS: ", Dumper($reportsections);
+                                while (my $section = $reportsections->next) {
+                                        push @reportsection_meta, {
+                                                                   $section->name => {
+                                                                                      $section->get_columns
+                                                                                     }
+                                                                  };
+                                }
+                                my $myself = $r->id == $id ? 1 : 0;
+                                $groupcontext{$type}{$group_id}{$r->id}{myself} = $myself;
+                                $groupcontext{$type}{$group_id}{$r->id}{meta}   = \@reportsection_meta;
+                        }
+                }
+                #say STDERR Dumper(\%groupcontext);
+                return \%groupcontext;
         }
 
         sub _as_data
@@ -232,16 +263,15 @@ class Artemis::Reports::DPath is dirty {
                 my ($report) = @_;
 
                 my $simple_hash = {
-                                   report => {
-                                              $report->get_columns,
-                                              suite_name         => $report->suite ? $report->suite->name : 'unknown',
-                                              machine_name       => $report->machine_name || 'unknown',
-                                              created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
-                                              created_at_ymd     => $report->created_at->ymd('-'),
-                                             },
-                                   #reportsectionmeta => _reportsection_meta($report), # obsolete, all in parsed report
-                                   # groupcontext => ...
-                                   results => $report->get_cached_tapdom,
+                                   report       => {
+                                                    $report->get_columns,
+                                                    suite_name         => $report->suite ? $report->suite->name : 'unknown',
+                                                    machine_name       => $report->machine_name || 'unknown',
+                                                    created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
+                                                    created_at_ymd     => $report->created_at->ymd('-'),
+                                                   },
+                                   results      => $report->get_cached_tapdom,
+                                   groupcontext => _groupcontext($report),
                                   };
                 return $simple_hash;
         }
