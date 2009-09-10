@@ -162,7 +162,7 @@
 
 # ----- group reports together
 
-# testrun 17: 23, 22
+# testrun 17: 23, 22, 20
 
 - schema: ReportgroupTestrun
   name: 17-23
@@ -183,5 +183,21 @@
   data:
     testrun_id: 17
     report_id: 20
+    primaryreport: ~
+
+# arbitrary zomtec: 23, 22
+
+- schema: ReportgroupArbitrary
+  name: zomtec-23
+  data:
+    arbitrary_id: zomtec
+    report_id: 20
+    primaryreport: ~
+
+- schema: ReportgroupArbitrary
+  name: zomtec-22
+  data:
+    arbitrary_id: zomtec
+    report_id: 22
     primaryreport: ~
 
