@@ -220,11 +220,13 @@ class Artemis::Reports::DPath is dirty {
 
                 my %groupcontext = ();
                 my $id = $report->id;
+                my $rga = $report->reportgrouparbitrary;
+                my $rgt = $report->reportgrouptestrun;
                 my %groupreports = (
-                                    arbitrary    => $report->reportgrouparbitrary ? scalar $report->reportgrouparbitrary->groupreports : undef,
-                                    arbitrary_id => $report->reportgrouparbitrary ?        $report->reportgrouparbitrary->arbitrary_id : undef,
-                                    testrun      => $report->reportgrouptestrun   ? scalar $report->reportgrouptestrun->groupreports   : undef,
-                                    testrun_id   => $report->reportgrouptestrun   ?        $report->reportgrouptestrun->testrun_id     : undef,
+                                    arbitrary    => $rga ? scalar $rga->groupreports : undef,
+                                    arbitrary_id => $rga ?        $rga->arbitrary_id : undef,
+                                    testrun      => $rgt ? scalar $rgt->groupreports   : undef,
+                                    testrun_id   => $rgt ?        $rgt->testrun_id     : undef,
                                    );
 
                 if ($report->reportgrouptestrun) {
@@ -240,7 +242,8 @@ class Artemis::Reports::DPath is dirty {
 
                         # say STDERR "${type}_id: ", $groupreports{"${type}_id"};
                         # say STDERR "  groupreports{$type}.count: ",    $groupreports{$type}->count;
-                        while (my $r = $groupreports{$type}->next)
+                        # say STDERR "* $id - groupreports{$type}.count: ",    $groupreports{$type}->count;
+                        while (my $groupreport = $groupreports{$type}->next)
                         {
                                 my $groupreport_id = $groupreport->id;
                                 # say STDERR "  gr.id: $groupreport_id";
@@ -264,7 +267,7 @@ class Artemis::Reports::DPath is dirty {
                                 $groupcontext{$type}{$group_id}{$r->id}{meta}   = \@reportsection_meta;
                         }
                 }
-                #say STDERR Dumper(\%groupcontext);
+                # say STDERR Dumper(\%groupcontext);
                 return \%groupcontext;
         }
 
