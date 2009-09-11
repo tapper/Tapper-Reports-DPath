@@ -59,6 +59,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache = new Cache::FileCache;
+                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
 
                 # we cache on the dpath
                 # but need count to verify and maintain cache validity
@@ -77,6 +78,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache      = new Cache::FileCache;
+                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
                 say STDERR "  <- get whole: $reports_path ($rs_count vs. ".($cached_res->{count}||'').")";
@@ -107,6 +109,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache = new Cache::FileCache;
+                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
                 say STDERR "  -> set single: $reports_id -- $path";
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
                              $res
@@ -119,6 +122,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache      = new Cache::FileCache;
+                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
 
                 print STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
