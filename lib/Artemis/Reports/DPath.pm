@@ -243,9 +243,14 @@ class Artemis::Reports::DPath is dirty {
                                 my $reportsections = $report->reportsections;
                                 #say STDERR "REPORT_SECTIONS: ", Dumper($reportsections);
                                 while (my $section = $reportsections->next) {
+
+                                        my %columns = $section->get_columns;
+                                        foreach (keys %columns) {
+                                                delete $columns{$_} unless defined $columns{$_};
+                                        }
                                         push @reportsection_meta, {
                                                                    $section->name => {
-                                                                                      $section->get_columns
+                                                                                      %columns
                                                                                      }
                                                                   };
                                 }
