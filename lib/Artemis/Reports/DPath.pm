@@ -242,12 +242,13 @@ class Artemis::Reports::DPath is dirty {
                         # say STDERR "  groupreports{$type}.count: ",    $groupreports{$type}->count;
                         while (my $r = $groupreports{$type}->next)
                         {
-                                # say STDERR "  r.id: ", $r->id;
-                                my @reportsection_meta = ();
-                                my $reportsections = $report->reportsections;
-                                #say STDERR "REPORT_SECTIONS: ", Dumper($reportsections);
-                                while (my $section = $reportsections->next) {
-
+                                my $groupreport_id = $groupreport->id;
+                                # say STDERR "  gr.id: $groupreport_id";
+                                my @greportsection_meta = ();
+                                my $grsections = $groupreport->reportsections;
+                                # say STDERR "* $groupreport_id GROUPREPORT_SECTIONS count: ", $grsections->count;
+                                while (my $section = $grsections->next)
+                                {
                                         my %columns = $section->get_columns;
                                         foreach (keys %columns) {
                                                 delete $columns{$_} unless defined $columns{$_};
