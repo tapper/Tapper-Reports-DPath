@@ -256,11 +256,13 @@ class Artemis::Reports::DPath is dirty {
                                         foreach (keys %columns) {
                                                 delete $columns{$_} unless defined $columns{$_};
                                         }
-                                        push @reportsection_meta, {
-                                                                   $section->name => {
-                                                                                      %columns
-                                                                                     }
-                                                                  };
+                                        delete $columns{$_} foreach qw(succession name id report_id);
+                                        push @greportsection_meta, {
+                                                                    $section->name => {
+                                                                                       %columns
+                                                                                      }
+                                                                   }
+                                            if keys %columns;
                                 }
                                 my $myself = $r->id == $id ? 1 : 0;
                                 $groupcontext{$type}{$group_id}{$r->id}{myself} = $myself;
