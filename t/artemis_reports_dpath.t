@@ -117,7 +117,7 @@ is ($tapdom->[2]{section}{'guest_1_suse_sles10_sp3_rc2_32b_smp_qcow'}{tap}{tests
 is ($tapdom->[3]{section}{'guest_2_opensuse_11_1_32b_qcow'}{tap}{tests_planned}, 1,           "parsed tap - section 3 - tests_planned");
 
 $report_data = Artemis::Reports::DPath::_as_data($report);
-say STDERR "REPORT_DATA ".Dumper($report_data);
+# say STDERR "REPORT_DATA ".Dumper($report_data);
 is ($report_data->{results}[0]{section}{'Metainfo'}{tap}{tests_planned}, 2,                                 "full report - section 0 - tests_planned");
 is ($report_data->{results}[1]{section}{'XEN-Metainfo'}{tap}{tests_planned}, 1,                             "full report - section 1 - tests_planned");
 is ($report_data->{results}[2]{section}{'guest_1_suse_sles10_sp3_rc2_32b_smp_qcow'}{tap}{tests_planned}, 1, "full report - section 2 - tests_planned");
