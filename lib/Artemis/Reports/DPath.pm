@@ -264,9 +264,13 @@ class Artemis::Reports::DPath is dirty {
                                                                    }
                                             if keys %columns;
                                 }
-                                my $myself = $r->id == $id ? 1 : 0;
-                                $groupcontext{$type}{$group_id}{$r->id}{myself} = $myself;
-                                $groupcontext{$type}{$group_id}{$r->id}{meta}   = \@reportsection_meta;
+                                my $primary = 0;
+                                $primary = 1 if $type eq "arbitrary" && $groupreport->reportgrouparbitrary->primaryreport;
+                                $primary = 1 if $type eq "testrun"   && $groupreport->reportgrouptestrun->primaryreport;
+
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{myself}  = $groupreport_id == $id ? 1 : 0;
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{primary} = $primary ? 1 : 0;
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{meta}    = \@greportsection_meta;
                         }
                 }
                 # say STDERR Dumper(\%groupcontext);
