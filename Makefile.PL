@@ -10,7 +10,7 @@ author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
 requires 'perl'                  => 5.010;
 requires 'parent'                => 0;
 requires 'HTML::Mason'           => "1.40";
-requires 'Data::DPath'           => '0.14';
+requires 'Data::DPath'           => '0.21';
 requires 'File::ShareDir'        => 0;
 requires 'Artemis::Config'       => 0;
 requires 'Artemis::Schema'       => '2.010034';
