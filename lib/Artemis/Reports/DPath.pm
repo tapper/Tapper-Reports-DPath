@@ -31,7 +31,7 @@ class Artemis::Reports::DPath is dirty {
         # - foo => 23           ... mapped to "me.foo" => 23
         # - "report.foo" => 23  ... mapped to "me.foo" => 23
         # - suite_name => "bar" ... mapped to "suite.name" => "bar"
-        # - -and => ...         ... mapped to "-and" => ...
+        # - -and => ...         ... mapped to "-and" => ...            # just to ensure that it doesn't produce: "me.-and" => ...
         sub _fix_condition
         {
                 no warnings 'uninitialized';
@@ -59,6 +59,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache = new Cache::FileCache;
+                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
 
                 # we cache on the dpath
                 # but need count to verify and maintain cache validity
@@ -77,6 +78,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache      = new Cache::FileCache;
+                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
                 say STDERR "  <- get whole: $reports_path ($rs_count vs. ".($cached_res->{count}||'').")";
@@ -86,7 +88,7 @@ class Artemis::Reports::DPath is dirty {
                         say STDERR "  Gotcha!";
                         return $cached_res->{res}
                 }
-                
+
                 # clean up when matching report count changed
                 $cache->remove( $reports_path );
                 return undef;
@@ -107,6 +109,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache = new Cache::FileCache;
+                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
                 say STDERR "  -> set single: $reports_id -- $path";
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
                              $res
@@ -119,6 +122,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache      = new Cache::FileCache;
+                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
 
                 print STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
@@ -211,19 +215,82 @@ class Artemis::Reports::DPath is dirty {
                 return eval "12345";
         }
 
+        sub _groupcontext {
+                my ($report) = @_;
+
+                my %groupcontext = ();
+                my $id = $report->id;
+                my $rga = $report->reportgrouparbitrary;
+                my $rgt = $report->reportgrouptestrun;
+                my %groupreports = (
+                                    arbitrary    => $rga ? scalar $rga->groupreports : undef,
+                                    arbitrary_id => $rga ?        $rga->arbitrary_id : undef,
+                                    testrun      => $rgt ? scalar $rgt->groupreports   : undef,
+                                    testrun_id   => $rgt ?        $rgt->testrun_id     : undef,
+                                   );
+
+                if ($report->reportgrouptestrun) {
+                        my $rgt_id = $report->reportgrouptestrun->testrun_id;
+                        my $rgt_reports = model('ReportsDB')->resultset('ReportgroupTestrun')->search({ testrun_id => $rgt_id});
+                        # say STDERR "\nrgt $rgt_id count: ", $rgt_reports->count;
+                }
+
+                foreach my $type (qw(arbitrary testrun))
+                {
+                        next unless $groupreports{$type};
+                        my $group_id = $groupreports{"${type}_id"};
+
+                        # say STDERR "${type}_id: ", $groupreports{"${type}_id"};
+                        # say STDERR "  groupreports{$type}.count: ",    $groupreports{$type}->count;
+                        # say STDERR "* $id - groupreports{$type}.count: ",    $groupreports{$type}->count;
+                        while (my $groupreport = $groupreports{$type}->next)
+                        {
+                                my $groupreport_id = $groupreport->id;
+                                # say STDERR "  gr.id: $groupreport_id";
+                                my @greportsection_meta = ();
+                                my $grsections = $groupreport->reportsections;
+                                # say STDERR "* $groupreport_id GROUPREPORT_SECTIONS count: ", $grsections->count;
+                                while (my $section = $grsections->next)
+                                {
+                                        my %columns = $section->get_columns;
+                                        foreach (keys %columns) {
+                                                delete $columns{$_} unless defined $columns{$_};
+                                        }
+                                        delete $columns{$_} foreach qw(succession name id report_id);
+                                        push @greportsection_meta, {
+                                                                    $section->name => {
+                                                                                       %columns
+                                                                                      }
+                                                                   }
+                                            if keys %columns;
+                                }
+                                my $primary = 0;
+                                $primary = 1 if $type eq "arbitrary" && $groupreport->reportgrouparbitrary->primaryreport;
+                                $primary = 1 if $type eq "testrun"   && $groupreport->reportgrouptestrun->primaryreport;
+
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{myself}  = $groupreport_id == $id ? 1 : 0;
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{primary} = $primary ? 1 : 0;
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{meta}    = \@greportsection_meta;
+                        }
+                }
+                # say STDERR Dumper(\%groupcontext);
+                return \%groupcontext;
+        }
+
         sub _as_data
         {
                 my ($report) = @_;
 
                 my $simple_hash = {
-                                   report => {
-                                              $report->get_columns,
-                                              suite_name         => $report->suite ? $report->suite->name : 'unknown',
-                                              machine_name       => $report->machine_name || 'unknown',
-                                              created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
-                                              created_at_ymd     => $report->created_at->ymd('-'),
-                                             },
-                                   results => $report->get_cached_tapdom,
+                                   report       => {
+                                                    $report->get_columns,
+                                                    suite_name         => $report->suite ? $report->suite->name : 'unknown',
+                                                    machine_name       => $report->machine_name || 'unknown',
+                                                    created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
+                                                    created_at_ymd     => $report->created_at->ymd('-'),
+                                                   },
+                                   results      => $report->get_cached_tapdom,
+                                   groupcontext => _groupcontext($report),
                                   };
                 return $simple_hash;
         }
@@ -231,7 +298,7 @@ class Artemis::Reports::DPath is dirty {
 }
 
 package Artemis::Reports::DPath;
-our $VERSION = '2.010013';
+our $VERSION = '2.010014';
 
 1;
 
