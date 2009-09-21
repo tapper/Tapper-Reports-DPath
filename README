@@ -20,7 +20,7 @@ SYNOPSIS
     search query, the second part is a normal Data::DPath expression that
     matches against the datastructure that is build from the DB.
 
-METHODS and FUNCTIONS
+API FUNCTIONS
   reports_dpath_search
     Takes an extended DPath expression, applies it to an Artemis Reports
     with TAP::DOM structure and returns the matching results in an array.
@@ -30,6 +30,19 @@ METHODS and FUNCTIONS
 
   reportdata
     Alias for reports_dpath_search.
+
+UTILITY FUNCTIONS
+  cache_single_dpath
+    Cache a result for a raw dpath on a report id.
+
+  cached_single_dpath
+    Return cached result for a raw dpath on a report id.
+
+  cache_whole_dpath
+    Cache a result for a complete artemis::dpath on all reports.
+
+  cached_whole_dpath
+    Return cached result for a complete artemis::dpath on all reports.
 
 AUTHOR
     OSRC SysInt Team, "<osrc-sysint at elbe.amd.com>"
