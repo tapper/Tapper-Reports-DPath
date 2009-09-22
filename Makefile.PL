@@ -13,7 +13,7 @@ requires 'HTML::Mason'           => "1.40";
 requires 'Data::DPath'           => '0.21';
 requires 'File::ShareDir'        => 0;
 requires 'Artemis::Config'       => 0;
-requires 'Artemis::Schema'       => '2.010034';
+requires 'Artemis::Schema'       => '2.010052';
 requires 'Sub::Exporter'         => '0.982';
 requires 'Cache::FileCache'      => 0;
 
