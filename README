@@ -12,6 +12,11 @@ SYNOPSIS
                          '{ suite_name => "TestSuite-LmBench" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id'
                       );
 
+     #
+     # '{ "reportgrouptestrun.testrun_id" => 4711 } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id
+     #
+     # '{ "reportgrouparbitrary.arbitrary_id" => "fc123a2" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id
+
     This searches all reports of the test suite "TestSuite-LmBench" and
     furthermore in them for a TAP section "math" with the particular subtest
     "bogomips" and takes the first array entry of them.
