@@ -174,9 +174,9 @@ class Artemis::Reports::DPath is dirty {
                                                created_at
                                                updated_at
                                       )],
-                      join      => [ 'suite',      ],
-                      '+select' => [ 'suite.name', ],
-                      '+as'     => [ 'suite.name', ],
+                      join      => [ 'suite',      'reportgrouptestrun',            'reportgrouparbitrary'             ],
+                      '+select' => [ 'suite.name', 'reportgrouptestrun.testrun_id', 'reportgrouparbitrary.arbitrary_id'],
+                      '+as'     => [ 'suite.name', 'reportgrouptestrun.testrun_id', 'reportgrouparbitrary.arbitrary_id'],
                      }
                     );
                 my $rs_count = $rs->count();
@@ -320,6 +320,12 @@ Artemis::Reports::DPath - Extended DPath access to Artemis reports.
     @resultlist = reportdata (
                      '{ suite_name => "TestSuite-LmBench" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id'
                   );
+
+ #
+ # '{ "reportgrouptestrun.testrun_id" => 4711 } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id
+ #
+ # '{ "reportgrouparbitrary.arbitrary_id" => "fc123a2" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id
+
 
 This searches all reports of the test suite "TestSuite-LmBench" and
 furthermore in them for a TAP section "math" with the particular
