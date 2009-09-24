@@ -81,10 +81,11 @@ class Artemis::Reports::DPath is dirty {
                 $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
-                say STDERR "  <- get whole: $reports_path ($rs_count vs. ".($cached_res->{count}||'').")";
-                return undef              if not defined $cached_res;
+                my $cached_res_count = $cached_res->{count} || 0;
+                say STDERR "  <- get whole: $reports_path ($rs_count vs. $cached_res_count)";
+                return undef if not defined $cached_res;
 
-                if ($cached_res->{count} and $cached_res->{count} == $rs_count) {
+                if ($cached_res_count == $rs_count) {
                         say STDERR "  Gotcha!";
                         return $cached_res->{res}
                 }
