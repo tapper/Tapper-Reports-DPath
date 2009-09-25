@@ -4,7 +4,7 @@ use 5.010;
 
 class Artemis::Reports::DPath is dirty {
 
-        use Artemis::Model 'model';
+        use Artemis::Model 'model', 'get_systems_id_for_hostname', 'get_hardwaredb_overview';
         use Text::Balanced 'extract_codeblock';
         use Data::DPath::Path;
         use Data::Dumper;
@@ -269,11 +269,14 @@ class Artemis::Reports::DPath is dirty {
                                 $primary = 1 if $type eq "arbitrary" && $groupreport->reportgrouparbitrary->primaryreport;
                                 $primary = 1 if $type eq "testrun"   && $groupreport->reportgrouptestrun->primaryreport;
 
-                                $groupcontext{$type}{$group_id}{$groupreport_id}{myself}  = $groupreport_id == $id ? 1 : 0;
-                                $groupcontext{$type}{$group_id}{$groupreport_id}{primary} = $primary ? 1 : 0;
-                                $groupcontext{$type}{$group_id}{$groupreport_id}{meta}    = \@greportsection_meta;
+                                my $lid = get_systems_id_for_hostname($report->machine_name);
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{myself}     = $groupreport_id == $id ? 1 : 0;
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{primary}    = $primary ? 1 : 0;
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{meta}       = \@greportsection_meta;
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{hardwaredb} = get_hardwaredb_overview($lid) if $lid;
                         }
                 }
+
                 # say STDERR Dumper(\%groupcontext);
                 return \%groupcontext;
         }
@@ -282,16 +285,27 @@ class Artemis::Reports::DPath is dirty {
         {
                 my ($report) = @_;
 
+                my $gctx         = _groupcontext($report);
+                my %groupcontext = (groupcontext => $gctx);
+                my %hardwaredb_overview;
+                if (keys %$gctx) {
+                        my $lid              = get_systems_id_for_hostname($report->machine_name);
+                        my $hwdb             = get_hardwaredb_overview($lid);
+                        %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
+                }
                 my $simple_hash = {
                                    report       => {
                                                     $report->get_columns,
-                                                    suite_name         => $report->suite ? $report->suite->name : 'unknown',
-                                                    machine_name       => $report->machine_name || 'unknown',
-                                                    created_at_ymd_hms => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
-                                                    created_at_ymd     => $report->created_at->ymd('-'),
+                                                    suite_name               => $report->suite ? $report->suite->name : 'unknown',
+                                                    reportgroup_testrun_id   => $report->reportgrouptestrun ? $report->reportgrouptestrun->testrun_id : undef,
+                                                    reportgroup_arbitrary_id => $report->reportgrouparbitrary ? $report->reportgrouparbitrary->arbitrary_id : undef,
+                                                    machine_name             => $report->machine_name || 'unknown',
+                                                    created_at_ymd_hms       => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
+                                                    created_at_ymd           => $report->created_at->ymd('-'),
+                                                    %hardwaredb_overview,
                                                    },
                                    results      => $report->get_cached_tapdom,
-                                   groupcontext => _groupcontext($report),
+                                   %groupcontext,
                                   };
                 return $simple_hash;
         }
