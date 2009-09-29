@@ -14,6 +14,7 @@ requires 'Data::DPath'           => '0.31';
 requires 'File::ShareDir'        => 0;
 requires 'Artemis::Config'       => 0;
 requires 'Artemis::Schema'       => '2.010057';
+requires 'Artemis::Model'        => '2.010014';
 requires 'Sub::Exporter'         => '0.982';
 requires 'Cache::FileCache'      => 0;
 requires 'JSON'                  => 0;
