@@ -40,8 +40,7 @@ class Artemis::Reports::DPath is dirty {
                 $condition      =~ s/(['"])?\bsuite_name\b(['"])?\s*=>/"suite.name" =>/;        # ';
                 $condition      =~ s/(['"])?\breportgroup_testrun_id\b(['"])?\s*=>/"reportgrouptestrun.testrun_id" =>/;                                             # ';
                 $condition      =~ s/(['"])?\breportgroup_arbitrary_id\b(['"])?\s*=>/"reportgrouparbitrary.arbitrary_id" =>/;                                       # ';
-                # $condition      =~ s/([^-\w])(['"])?((report|me)\.)?(?<!suite|reportgrouptestrun|reportgrouparbitrary\.)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
-                $condition      =~ s/([^-\w])(['"])?((report|me)\.)?(?<!suite\.)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
+                $condition      =~ s/([^-\w])(['"])?((report|me)\.)?(?<!suite\.)(?<!reportgrouparbitrary\.)(?<!reportgrouptestrun\.)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
 
                 return $condition;
 
