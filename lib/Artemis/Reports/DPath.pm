@@ -274,11 +274,9 @@ class Artemis::Reports::DPath is dirty {
                                 $primary = 1 if $type eq "arbitrary" && $groupreport->reportgrouparbitrary->primaryreport;
                                 $primary = 1 if $type eq "testrun"   && $groupreport->reportgrouptestrun->primaryreport;
 
-                                my $lid = get_systems_id_for_hostname($report->machine_name);
                                 $groupcontext{$type}{$group_id}{$groupreport_id}{myself}     = $groupreport_id == $id ? 1 : 0;
                                 $groupcontext{$type}{$group_id}{$groupreport_id}{primary}    = $primary ? 1 : 0;
                                 $groupcontext{$type}{$group_id}{$groupreport_id}{meta}       = \@greportsection_meta;
-                                $groupcontext{$type}{$group_id}{$groupreport_id}{hardwaredb} = get_hardwaredb_overview($lid) if $lid;
                         }
                 }
 
@@ -290,14 +288,11 @@ class Artemis::Reports::DPath is dirty {
         {
                 my ($report) = @_;
 
-                my $gctx         = _groupcontext($report);
-                my %groupcontext = (groupcontext => $gctx);
                 my %hardwaredb_overview;
-                if (keys %$gctx) {
-                        my $lid              = get_systems_id_for_hostname($report->machine_name);
-                        my $hwdb             = get_hardwaredb_overview($lid);
-                        %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
-                }
+                my $lid              = $report->hardwaredb_systems_id || get_systems_id_for_hostname($report->machine_name);
+                my $hwdb             = get_hardwaredb_overview($lid);
+                %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
+
                 my $simple_hash = {
                                    report       => {
                                                     $report->get_columns,
@@ -310,7 +305,7 @@ class Artemis::Reports::DPath is dirty {
                                                     %hardwaredb_overview,
                                                    },
                                    results      => $report->get_cached_tapdom,
-                                   %groupcontext,
+                                   groupcontext => _groupcontext($report),
                                   };
                 return $simple_hash;
         }
