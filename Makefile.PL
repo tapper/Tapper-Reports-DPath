@@ -8,16 +8,17 @@ all_from 'lib/Artemis/Reports/DPath.pm';
 author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
 
 requires 'perl'                  => 5.010;
+requires 'JSON'                  => 0;
 requires 'parent'                => 0;
-requires 'HTML::Mason'           => "1.40";
+requires 'DateTime'              => 0;
 requires 'Data::DPath'           => '0.31';
+requires 'HTML::Mason'           => "1.40";
+requires 'Sub::Exporter'         => '0.982';
 requires 'File::ShareDir'        => 0;
 requires 'Artemis::Config'       => 0;
 requires 'Artemis::Schema'       => '2.010057';
-requires 'Sub::Exporter'         => '0.982';
 requires 'Cache::FileCache'      => 0;
-requires 'JSON'                  => 0;
-requires 'DateTime'              => 0;
+requires 'Data::Structure::Util' => 0;
 
 build_requires 'Test::More';
 build_requires 'Artemis::Schema::TestTools';
