@@ -234,10 +234,22 @@ class Artemis::Reports::DPath is dirty {
                                     testrun_id   => $rgt ?        $rgt->testrun_id     : undef,
                                    );
 
-                if ($report->reportgrouptestrun) {
-                        my $rgt_id = $report->reportgrouptestrun->testrun_id;
-                        my $rgt_reports = model('ReportsDB')->resultset('ReportgroupTestrun')->search({ testrun_id => $rgt_id});
-                        # say STDERR "\nrgt $rgt_id count: ", $rgt_reports->count;
+                # if ($report->reportgrouptestrun) {
+                #         my $rgt_id = $report->reportgrouptestrun->testrun_id;
+                #         my $rgt_reports = model('ReportsDB')->resultset('ReportgroupTestrun')->search({ testrun_id => $rgt_id});
+                #         # say STDERR "\nrgt $rgt_id count: ", $rgt_reports->count;
+                # }
+
+
+                # create report group stats
+                if ($report->reportgrouptestrun and $report->reportgrouptestrun->testrun_id)
+                {
+                        my $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->search({ testrun_id => $rgt->testrun_id});
+                        unless ($rgt_stats and $rgt_stats->testrun_id)
+                        {
+                                $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->new({ testrun_id => $rgt->testrun_id});
+                                $rgt_stats->update_failed_passed;
+                        }
                 }
 
                 foreach my $type (qw(arbitrary testrun))
