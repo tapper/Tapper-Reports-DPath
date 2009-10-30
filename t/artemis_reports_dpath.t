@@ -10,11 +10,11 @@ use Artemis::Reports::DPath 'reportdata';
 use Artemis::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Data::Dumper;
-use Test::NoWarnings;
+#use Test::NoWarnings;
 use Test::Deep;
 
 print "TAP Version 13\n";
-plan tests => 64;
+plan tests => 63;
 
 # -------------------- path division --------------------
 
