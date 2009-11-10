@@ -240,18 +240,6 @@ class Artemis::Reports::DPath is dirty {
                 #         # say STDERR "\nrgt $rgt_id count: ", $rgt_reports->count;
                 # }
 
-
-                # create report group stats
-                if ($report->reportgrouptestrun and $report->reportgrouptestrun->testrun_id)
-                {
-                        my $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->find($rgt->testrun_id);
-                        unless ($rgt_stats and $rgt_stats->testrun_id)
-                        {
-                                $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->new({ testrun_id => $rgt->testrun_id});
-                                $rgt_stats->update_failed_passed;
-                        }
-                }
-
                 foreach my $type (qw(arbitrary testrun))
                 {
                         next unless $groupreports{$type};
@@ -304,6 +292,28 @@ class Artemis::Reports::DPath is dirty {
                 my $hwdb             = get_hardwaredb_overview($lid);
                 %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
 
+                # ==================================================
+
+                my $rgt = $report->reportgrouptestrun;
+                my $reportgroupstats = {};
+                # create report group stats
+                if ($report->reportgrouptestrun and $report->reportgrouptestrun->testrun_id)
+                {
+                        my $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->find($rgt->testrun_id);
+                        unless ($rgt_stats and $rgt_stats->testrun_id)
+                        {
+                                $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->new({ testrun_id => $rgt->testrun_id});
+                                $rgt_stats->update_failed_passed;
+                        }
+                        my @stat_fields = (qw/failed passed total parse_errors skipped todo todo_passed wait/);
+                        no strict 'refs';
+                        $reportgroupstats = {
+                                             map { ($_ => $rgt_stats->$_ ) } @stat_fields
+                                            };
+                }
+
+                # ==================================================
+
                 my $simple_hash = {
                                    report       => {
                                                     $report->get_columns,
@@ -317,6 +327,7 @@ class Artemis::Reports::DPath is dirty {
                                                    },
                                    results      => $report->get_cached_tapdom,
                                    groupcontext => _groupcontext($report),
+                                   groupstats   => $reportgroupstats,
                                   };
                 return $simple_hash;
         }
