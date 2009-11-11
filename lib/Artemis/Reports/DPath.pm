@@ -283,19 +283,12 @@ class Artemis::Reports::DPath is dirty {
                 return \%groupcontext;
         }
 
-        sub _as_data
-        {
-                my ($report) = @_;
-
-                my %hardwaredb_overview;
-                my $lid              = $report->hardwaredb_systems_id || get_systems_id_for_hostname($report->machine_name);
-                my $hwdb             = get_hardwaredb_overview($lid);
-                %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
-
-                # ==================================================
+        sub _reportgroupstats {
+                my ($self, $report) = @_;
 
                 my $rgt = $report->reportgrouptestrun;
                 my $reportgroupstats = {};
+
                 # create report group stats
                 if ($report->reportgrouptestrun and $report->reportgrouptestrun->testrun_id)
                 {
@@ -311,8 +304,18 @@ class Artemis::Reports::DPath is dirty {
                                              map { ($_ => $rgt_stats->$_ ) } @stat_fields
                                             };
                 }
+                return $reportgroupstats;
+        }
 
-                # ==================================================
+        sub _as_data
+        {
+                my ($report) = @_;
+
+                my %hardwaredb_overview;
+                my $lid              = $report->hardwaredb_systems_id || get_systems_id_for_hostname($report->machine_name);
+                my $hwdb             = get_hardwaredb_overview($lid);
+                my $reportgroupstats = _reportgroupstats($report);
+                %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
 
                 my $simple_hash = {
                                    report       => {
