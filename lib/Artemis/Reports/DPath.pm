@@ -295,8 +295,10 @@ class Artemis::Reports::DPath is dirty {
                         my $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->find($rgt->testrun_id);
                         unless ($rgt_stats and $rgt_stats->testrun_id)
                         {
+                                # This is just a fail-back mechanism, in case the "fix-missinging-groupstats" script has not yet been run.
                                 $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->new({ testrun_id => $rgt->testrun_id});
                                 $rgt_stats->update_failed_passed;
+                                $rgt_stats->update;
                         }
                         my @stat_fields = (qw/failed passed total parse_errors skipped todo todo_passed wait/);
                         no strict 'refs';
