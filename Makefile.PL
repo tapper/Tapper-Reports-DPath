@@ -15,9 +15,9 @@ requires 'Data::DPath'           => '0.31';
 requires 'HTML::Mason'           => "1.40";
 requires 'Sub::Exporter'         => '0.982';
 requires 'File::ShareDir'        => 0;
-requires 'Artemis::Config'       => 0;
-requires 'Artemis::Schema'       => '2.010057';
-requires 'Artemis::Model'        => '2.010014';
+requires 'Artemis::Config'       => '2.010055';
+requires 'Artemis::Schema'       => '2.010065';
+requires 'Artemis::Model'        => '2.010015';
 requires 'Cache::FileCache'      => 0;
 requires 'Data::Structure::Util' => 0;
 
