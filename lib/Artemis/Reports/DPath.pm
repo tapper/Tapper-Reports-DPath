@@ -329,6 +329,10 @@ class Artemis::Reports::DPath is dirty {
                                                     created_at_ymd_hms       => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
                                                     created_at_ymd           => $report->created_at->ymd('-'),
                                                     %hardwaredb_overview,
+                                                    groupstats               => {
+                                                                                 DEPRECATED_BETTER_USE_groupstats_FROM_ONE_LEVEL_ABOVE => 1,
+                                                                                 %$reportgroupstats,
+                                                                                 },
                                                    },
                                    results      => $report->get_cached_tapdom,
                                    groupcontext => _groupcontext($report),
