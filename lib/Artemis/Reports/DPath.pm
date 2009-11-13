@@ -300,7 +300,7 @@ class Artemis::Reports::DPath is dirty {
                                 $rgt_stats->update_failed_passed;
                                 $rgt_stats->insert;
                         }
-                        my @stat_fields = (qw/failed passed total parse_errors skipped todo todo_passed wait/);
+                        my @stat_fields = (qw/failed passed total parse_errors skipped todo todo_passed wait success_ratio/);
                         no strict 'refs';
                         $reportgroupstats = {
                                              map { ($_ => $rgt_stats->$_ ) } @stat_fields
@@ -330,7 +330,7 @@ class Artemis::Reports::DPath is dirty {
                                                     created_at_ymd           => $report->created_at->ymd('-'),
                                                     %hardwaredb_overview,
                                                     groupstats               => {
-                                                                                 DEPRECATED_BETTER_USE_groupstats_FROM_ONE_LEVEL_ABOVE => 1,
+                                                                                 DEPRECATED => 'BETTER_USE_groupstats_FROM_ONE_LEVEL_ABOVE',
                                                                                  %$reportgroupstats,
                                                                                  },
                                                    },
