@@ -284,7 +284,7 @@ class Artemis::Reports::DPath is dirty {
         }
 
         sub _reportgroupstats {
-                my ($self, $report) = @_;
+                my ($report) = @_;
 
                 my $rgt = $report->reportgrouptestrun;
                 my $reportgroupstats = {};
@@ -298,7 +298,7 @@ class Artemis::Reports::DPath is dirty {
                                 # This is just a fail-back mechanism, in case the "fix-missinging-groupstats" script has not yet been run.
                                 $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->new({ testrun_id => $rgt->testrun_id});
                                 $rgt_stats->update_failed_passed;
-                                $rgt_stats->update;
+                                $rgt_stats->insert;
                         }
                         my @stat_fields = (qw/failed passed total parse_errors skipped todo todo_passed wait/);
                         no strict 'refs';
