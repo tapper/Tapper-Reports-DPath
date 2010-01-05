@@ -53,7 +53,6 @@ class Artemis::Reports::DPath is dirty {
         sub _cachekey_whole_dpath {
                 my ($reports_path) = @_;
                 my $key = ($ENV{ARTEMIS_DEVELOPMENT} || "0") . '::' . $reports_path;
-                #say STDERR "  . $key";
                 return $key;
         }
 
@@ -68,7 +67,7 @@ class Artemis::Reports::DPath is dirty {
                 # we cache on the dpath
                 # but need count to verify and maintain cache validity
 
-                say STDERR "  -> set whole: $reports_path ($rs_count)";
+#                say STDERR "  -> set whole: $reports_path ($rs_count)";
                 $cache->set( _cachekey_whole_dpath($reports_path),
                              {
                               count => $rs_count,
@@ -86,11 +85,11 @@ class Artemis::Reports::DPath is dirty {
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
                 my $cached_res_count = $cached_res->{count} || 0;
-                say STDERR "  <- get whole: $reports_path ($rs_count vs. $cached_res_count)";
+#                say STDERR "  <- get whole: $reports_path ($rs_count vs. $cached_res_count)";
                 return undef if not defined $cached_res;
 
                 if ($cached_res_count == $rs_count) {
-                        say STDERR "  Gotcha!";
+#                        say STDERR "  Gotcha!";
                         return $cached_res->{res}
                 }
 
@@ -115,7 +114,7 @@ class Artemis::Reports::DPath is dirty {
 
                 my $cache = new Cache::FileCache;
                 $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
-                say STDERR "  -> set single: $reports_id -- $path";
+#                say STDERR "  -> set single: $reports_id -- $path";
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
                              $res
                            );
@@ -130,7 +129,7 @@ class Artemis::Reports::DPath is dirty {
                 $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
 
-                print STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
+#                print STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
                 return $cached_res;
         }
 
