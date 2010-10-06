@@ -2,6 +2,7 @@ use MooseX::Declare;
 
 use 5.010;
 
+## no critic (RequireUseStrict)
 class Artemis::Reports::DPath is dirty {
 
         use Artemis::Model 'model', 'get_systems_id_for_hostname', 'get_hardwaredb_overview';
@@ -22,10 +23,10 @@ class Artemis::Reports::DPath is dirty {
         }
 
         # better use alias
-        sub rds($) { reports_dpath_search(@_) }
+        sub rds($) { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
         # better use alias
-        sub reportdata($) { reports_dpath_search(@_) }
+        sub reportdata($) { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
         # allow trivial better readable column names
         # - foo => 23           ... mapped to "me.foo" => 23
@@ -86,7 +87,7 @@ class Artemis::Reports::DPath is dirty {
 
                 my $cached_res_count = $cached_res->{count} || 0;
 #                say STDERR "  <- get whole: $reports_path ($rs_count vs. $cached_res_count)";
-                return undef if not defined $cached_res;
+                return if not defined $cached_res;
 
                 if ($cached_res_count == $rs_count) {
 #                        say STDERR "  Gotcha!";
@@ -95,7 +96,7 @@ class Artemis::Reports::DPath is dirty {
 
                 # clean up when matching report count changed
                 $cache->remove( $reports_path );
-                return undef;
+                return;
         }
 
         # ----- cache single report dpaths queries -----
@@ -135,14 +136,14 @@ class Artemis::Reports::DPath is dirty {
 
         # ===== the query search =====
 
-        sub reports_dpath_search($) {
+        sub reports_dpath_search($) { ## no critic (ProhibitSubroutinePrototypes)
                 my ($reports_path) = @_;
 
                 my ($condition, $path) = _extract_condition_and_part($reports_path);
                 my $dpath              = new Data::DPath::Path( path => $path );
                 $condition             = _fix_condition($condition);
                 #say STDERR "condition: ".($condition || '');
-                my %condition          = $condition ? %{ eval $condition } : ();
+                my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
                 my $rs = model('ReportsDB')->resultset('Report')->search
                     (
                      {
@@ -216,7 +217,7 @@ class Artemis::Reports::DPath is dirty {
 
         sub _dummy_needed_for_tests {
                 # once there were problems with eval
-                return eval "12345";
+                return eval "12345"; ## no critic (ProhibitStringyEval)
         }
 
         sub _groupcontext {
@@ -300,7 +301,7 @@ class Artemis::Reports::DPath is dirty {
                                 $rgt_stats->insert;
                         }
                         my @stat_fields = (qw/failed passed total parse_errors skipped todo todo_passed wait success_ratio/);
-                        no strict 'refs';
+                        no strict 'refs'; ## no critic (ProhibitNoStrict)
                         $reportgroupstats = {
                                              map { ($_ => $rgt_stats->$_ ) } @stat_fields
                                             };

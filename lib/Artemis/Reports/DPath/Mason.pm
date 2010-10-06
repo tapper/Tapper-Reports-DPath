@@ -2,6 +2,7 @@ use MooseX::Declare;
 
 use 5.010;
 
+## no critic (RequireUseStrict)
 class Artemis::Reports::DPath::Mason {
         use HTML::Mason;
         use Cwd 'cwd';
