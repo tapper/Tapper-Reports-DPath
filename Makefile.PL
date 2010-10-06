@@ -22,6 +22,7 @@ requires 'Cache::FileCache'      => 0;
 requires 'Data::Structure::Util' => 0;
 
 build_requires 'Test::More';
+build_requires 'Test::Perl::Critic';
 build_requires 'Artemis::Schema::TestTools';
 build_requires 'Test::Fixture::DBIC::Schema';
 
