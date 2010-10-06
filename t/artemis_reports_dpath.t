@@ -137,14 +137,14 @@ is(scalar @res, 2,  "count plans of suite perfmon 1.03" );
 @res = reportdata '{ "reportgroup_testrun_id" => 17 } :: /report/id';
 is(scalar @res, 3,  "count plans of reportgroup_testrun_id 17" );
 cmp_bag(\@res, [ 23, 22, 20 ], "report ids of reportgroup_testrun_id 17" );
-diag Dumper(\@res);
+# diag Dumper(\@res);
 
 # -------------------- reportgrouparbitrary --------------------
 
 @res = reportdata '{ "reportgroup_arbitrary_id" => "zomtec" } :: /report/id';
 is(scalar @res, 2,  "count plans of reportgroup_arbitrary_id zomtec" );
 cmp_bag(\@res, [ 22, 20 ], "report ids of reportgroup_arbitrary_id zomtec" );
-diag Dumper(\@res);
+# diag Dumper(\@res);
 
 # ------ context meta info ----
 $report      = reportsdb_schema->resultset('Report')->find(20);
