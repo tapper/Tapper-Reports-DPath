@@ -6,6 +6,7 @@ use inc::Module::Install;
 name     'Artemis-Reports-DPath';
 all_from 'lib/Artemis/Reports/DPath.pm';
 author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
+license  'freebsd';
 
 requires 'perl'                  => 5.010;
 requires 'JSON'                  => 0;
