@@ -79,4 +79,6 @@ $expected = q|
       "tests_planned" : 4
    }
 ]|;
-is($tt->render(template => $template), $expected, "tt template with JSON");
+my $render = $tt->render(template => $template);
+chomp $render; # we get an additional newline on some systems, don't know why
+is($render, $expected, "tt template with JSON");
