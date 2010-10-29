@@ -314,10 +314,12 @@ class Artemis::Reports::DPath is dirty {
                 my ($report) = @_;
 
                 my %hardwaredb_overview;
-                my $lid              = $report->hardwaredb_systems_id || get_systems_id_for_hostname($report->machine_name);
-                my $hwdb             = get_hardwaredb_overview($lid);
+                # hardwaredb overview done differently (but how?)
+                # my $lid              = $report->hardwaredb_systems_id || get_systems_id_for_hostname($report->machine_name);
+                # my $hwdb             = get_hardwaredb_overview($lid);
+                # %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
+                %hardwaredb_overview = ();
                 my $reportgroupstats = _reportgroupstats($report);
-                %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
 
                 my $simple_hash = {
                                    report       => {
