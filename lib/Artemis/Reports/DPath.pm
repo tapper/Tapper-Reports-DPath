@@ -5,7 +5,7 @@ use 5.010;
 ## no critic (RequireUseStrict)
 class Artemis::Reports::DPath is dirty {
 
-        use Artemis::Model 'model', 'get_systems_id_for_hostname', 'get_hardwaredb_overview';
+        use Artemis::Model 'model', 'get_hardware_overview'; #, 'get_systems_id_for_hostname'
         use Text::Balanced 'extract_codeblock';
         use Data::DPath::Path;
         use Data::Dumper;
@@ -313,12 +313,6 @@ class Artemis::Reports::DPath is dirty {
         {
                 my ($report) = @_;
 
-                my %hardwaredb_overview;
-                # hardwaredb overview done differently (but how?)
-                # my $lid              = $report->hardwaredb_systems_id || get_systems_id_for_hostname($report->machine_name);
-                # my $hwdb             = get_hardwaredb_overview($lid);
-                # %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
-                %hardwaredb_overview = ();
                 my $reportgroupstats = _reportgroupstats($report);
 
                 my $simple_hash = {
@@ -330,7 +324,6 @@ class Artemis::Reports::DPath is dirty {
                                                     machine_name             => $report->machine_name || 'unknown',
                                                     created_at_ymd_hms       => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
                                                     created_at_ymd           => $report->created_at->ymd('-'),
-                                                    %hardwaredb_overview,
                                                     groupstats               => {
                                                                                  DEPRECATED => 'BETTER_USE_groupstats_FROM_ONE_LEVEL_ABOVE',
                                                                                  %$reportgroupstats,
