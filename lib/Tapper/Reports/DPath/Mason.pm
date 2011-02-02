@@ -3,7 +3,7 @@ use MooseX::Declare;
 use 5.010;
 
 ## no critic (RequireUseStrict)
-class Artemis::Reports::DPath::Mason {
+class Tapper::Reports::DPath::Mason {
         use HTML::Mason;
         use Cwd 'cwd';
         use Data::Dumper;
@@ -17,7 +17,7 @@ class Artemis::Reports::DPath::Mason {
         }
         method render_template ($template) {
                 my $outbuf;
-                my $comp_root = module_dir('Artemis::Reports::DPath::Mason');
+                my $comp_root = module_dir('Tapper::Reports::DPath::Mason');
                 my $interp = new HTML::Mason::Interp
                     (
                      use_object_files => 1,
@@ -29,11 +29,11 @@ class Artemis::Reports::DPath::Mason {
                         $interp->make_component
                             (
                              comp_source => $template,
-                             name        => '/virtual/artemis_reports_dpath_mason',
+                             name        => '/virtual/tapper_reports_dpath_mason',
                             );
                 };
                 if ($@) {
-                        my $msg = "Artemis::Reports::DPath::Mason::render_template::make_component: ".$@;
+                        my $msg = "Tapper::Reports::DPath::Mason::render_template::make_component: ".$@;
                         print STDERR $msg;
                         return $msg if $self->debug;
                         return '';
@@ -42,7 +42,7 @@ class Artemis::Reports::DPath::Mason {
                         $interp->exec($anon_comp);
                 };
                 if ($@) {
-                        my $msg = "Artemis::Reports::DPath::Mason::render_template::exec(anon_comp): ".$@;
+                        my $msg = "Tapper::Reports::DPath::Mason::render_template::exec(anon_comp): ".$@;
                         print STDERR $msg;
                         return $msg if $self->debug;
                         return '';
@@ -65,14 +65,14 @@ class Artemis::Reports::DPath::Mason {
                                                          );
                 };
                 if ($@) {
-                        my $msg = "Artemis::Reports::DPath::Mason::render_file::new_Interp: ".$@;
+                        my $msg = "Tapper::Reports::DPath::Mason::render_file::new_Interp: ".$@;
                         print STDERR $msg;
                         return $msg if $self->debug;
                         return '';
                 }
                 eval { $interp->exec($file) };
                 if ($@) {
-                        my $msg = "Artemis::Reports::DPath::Mason::render_file::exec(file): ".$@;
+                        my $msg = "Tapper::Reports::DPath::Mason::render_file::exec(file): ".$@;
                         print STDERR $msg;
                         return $msg if $self->debug;
                         return '';
@@ -87,11 +87,11 @@ __END__
 
 =head1 NAME
 
-Artemis::Reports::DPath::Mason - Mix DPath into Mason templates
+Tapper::Reports::DPath::Mason - Mix DPath into Mason templates
 
 =head1 SYNOPSIS
 
-    use Artemis::Reports::DPath::Mason 'render';
+    use Tapper::Reports::DPath::Mason 'render';
     $result = render file => $filename;
     $result = render template => $string;
 

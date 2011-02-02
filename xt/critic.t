@@ -1,2 +1,2 @@
 use Test::Perl::Critic;
-all_critic_ok("lib/Artemis");
+all_critic_ok("lib/Tapper");

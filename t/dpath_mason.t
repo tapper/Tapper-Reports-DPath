@@ -7,8 +7,8 @@ BEGIN {
         use MRO::Compat;
 }
 
-use Artemis::Reports::DPath::Mason 'render';
-use Artemis::Schema::TestTools;
+use Tapper::Reports::DPath::Mason 'render';
+use Tapper::Schema::TestTools;
 use Test::Fixture::DBIC::Schema;
 use Data::Dumper;
 
@@ -17,7 +17,7 @@ plan tests => 5;
 
 # -------------------- path division --------------------
 
-my $mason = new Artemis::Reports::DPath::Mason;
+my $mason = new Tapper::Reports::DPath::Mason;
 my $result;
 my $template;
 my $path;

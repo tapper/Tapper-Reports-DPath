@@ -1,8 +1,8 @@
 NAME
-    Artemis::Reports::DPath - Extended DPath access to Artemis reports.
+    Tapper::Reports::DPath - Extended DPath access to Tapper reports.
 
 SYNOPSIS
-        use Artemis::Reports::DPath 'reports_dpath_search';
+        use Tapper::Reports::DPath 'reports_dpath_search';
         # the first bogomips entry of math sections:
         @resultlist = reportdata (
                          '{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]'
@@ -27,7 +27,7 @@ SYNOPSIS
 
 API FUNCTIONS
   reports_dpath_search
-    Takes an extended DPath expression, applies it to an Artemis Reports
+    Takes an extended DPath expression, applies it to an Tapper Reports
     with TAP::DOM structure and returns the matching results in an array.
 
   rds
@@ -44,10 +44,10 @@ UTILITY FUNCTIONS
     Return cached result for a raw dpath on a report id.
 
   cache_whole_dpath
-    Cache a result for a complete artemis::dpath on all reports.
+    Cache a result for a complete tapper::dpath on all reports.
 
   cached_whole_dpath
-    Return cached result for a complete artemis::dpath on all reports.
+    Return cached result for a complete tapper::dpath on all reports.
 
 AUTHOR
     OSRC SysInt Team, "<osrc-sysint at elbe.amd.com>"

@@ -45,7 +45,7 @@ not_in_file_ok(ChangeLog =>
                "placeholder date/time"       => qr(Date/time)
               );
 
-module_boilerplate_ok('lib/Artemis/Reports/DPath.pm');
+module_boilerplate_ok('lib/Tapper/Reports/DPath.pm');
 
 
 

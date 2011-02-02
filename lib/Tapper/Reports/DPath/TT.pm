@@ -3,14 +3,14 @@ use MooseX::Declare;
 use 5.010;
 
 ## no critic (RequireUseStrict)
-class Artemis::Reports::DPath::TT {
+class Tapper::Reports::DPath::TT {
         use Template;
         use Cwd 'cwd';
         use Data::Dumper;
 
         use Template::Stash;
         # BEGIN needed inside the TT template for vmethods
-        use Artemis::Reports::DPath 'reportdata';
+        use Tapper::Reports::DPath 'reportdata';
         use Data::Dumper;
         use Data::DPath 'dpath';
         use DateTime;
@@ -44,7 +44,7 @@ class Artemis::Reports::DPath::TT {
 
                 if(not $tt->process(\$template, {}, \$outbuf)) {
                         die Template->error();
-                        my $msg = "Artemis::Reports::DPath::TT::render_template: $Template::ERROR\n";
+                        my $msg = "Tapper::Reports::DPath::TT::render_template: $Template::ERROR\n";
                         print STDERR $msg;
                         return $msg if $self->debug;
                         return '';
@@ -58,7 +58,7 @@ class Artemis::Reports::DPath::TT {
 
                 if(not $tt->process($file, {}, \$outbuf)) {
                         die Template->error();
-                        my $msg = "Artemis::Reports::DPath::TT::render_template: $Template::ERROR\n";
+                        my $msg = "Tapper::Reports::DPath::TT::render_template: $Template::ERROR\n";
                         print STDERR $msg;
                         return $msg if $self->debug;
                         return '';
@@ -74,11 +74,11 @@ __END__
 
 =head1 NAME
 
-Artemis::Reports::DPath::Mason - Mix DPath into Mason templates
+Tapper::Reports::DPath::Mason - Mix DPath into Mason templates
 
 =head1 SYNOPSIS
 
-    use Artemis::Reports::DPath::Mason 'render';
+    use Tapper::Reports::DPath::Mason 'render';
     $result = render file => $filename;
     $result = render template => $string;
 

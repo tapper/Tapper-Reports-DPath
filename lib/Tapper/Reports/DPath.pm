@@ -3,9 +3,9 @@ use MooseX::Declare;
 use 5.010;
 
 ## no critic (RequireUseStrict)
-class Artemis::Reports::DPath is dirty {
+class Tapper::Reports::DPath is dirty {
 
-        use Artemis::Model 'model', 'get_hardware_overview'; #, 'get_systems_id_for_hostname'
+        use Tapper::Model 'model', 'get_hardware_overview'; #, 'get_systems_id_for_hostname'
         use Text::Balanced 'extract_codeblock';
         use Data::DPath::Path;
         use Data::Dumper;
@@ -49,11 +49,11 @@ class Artemis::Reports::DPath is dirty {
 
         # ===== CACHE =====
 
-        # ----- cache complete Artemis::Reports::DPath queries -----
+        # ----- cache complete Tapper::Reports::DPath queries -----
 
         sub _cachekey_whole_dpath {
                 my ($reports_path) = @_;
-                my $key = ($ENV{ARTEMIS_DEVELOPMENT} || "0") . '::' . $reports_path;
+                my $key = ($ENV{TAPPER_DEVELOPMENT} || "0") . '::' . $reports_path;
                 return $key;
         }
 
@@ -63,7 +63,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
+                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
 
                 # we cache on the dpath
                 # but need count to verify and maintain cache validity
@@ -82,7 +82,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache      = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
+                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
                 my $cached_res_count = $cached_res->{count} || 0;
@@ -103,7 +103,7 @@ class Artemis::Reports::DPath is dirty {
 
         sub _cachekey_single_dpath {
                 my ($path, $reports_id) = @_;
-                my $key = ($ENV{ARTEMIS_DEVELOPMENT} || "0") . '::' . $reports_id."::".$path;
+                my $key = ($ENV{TAPPER_DEVELOPMENT} || "0") . '::' . $reports_id."::".$path;
                 #say STDERR "  . $key";
                 return $key;
         }
@@ -114,7 +114,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
+                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
 #                say STDERR "  -> set single: $reports_id -- $path";
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
                              $res
@@ -127,7 +127,7 @@ class Artemis::Reports::DPath is dirty {
                 return if $ENV{HARNESS_ACTIVE};
 
                 my $cache      = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/ARTEMIS_CACHE_CLEAR';
+                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
 
 #                print STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
@@ -338,7 +338,7 @@ class Artemis::Reports::DPath is dirty {
 
 }
 
-package Artemis::Reports::DPath;
+package Tapper::Reports::DPath;
 our $VERSION = '2.010022';
 
 1;
@@ -347,11 +347,11 @@ __END__
 
 =head1 NAME
 
-Artemis::Reports::DPath - Extended DPath access to Artemis reports.
+Tapper::Reports::DPath - Extended DPath access to Tapper reports.
 
 =head1 SYNOPSIS
 
-    use Artemis::Reports::DPath 'reports_dpath_search';
+    use Tapper::Reports::DPath 'reports_dpath_search';
     # the first bogomips entry of math sections:
     @resultlist = reportdata (
                      '{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]'
@@ -380,7 +380,7 @@ the DB.
 
 =head2 reports_dpath_search
 
-Takes an extended DPath expression, applies it to an Artemis Reports
+Takes an extended DPath expression, applies it to an Tapper Reports
 with TAP::DOM structure and returns the matching results in an array.
 
 =head2 rds
@@ -404,11 +404,11 @@ Return cached result for a raw dpath on a report id.
 
 =head2 cache_whole_dpath
 
-Cache a result for a complete artemis::dpath on all reports.
+Cache a result for a complete tapper::dpath on all reports.
 
 =head2 cached_whole_dpath
 
-Return cached result for a complete artemis::dpath on all reports.
+Return cached result for a complete tapper::dpath on all reports.
 
 =head1 AUTHOR
 
