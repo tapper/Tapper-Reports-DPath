@@ -27,8 +27,8 @@ SYNOPSIS
 
 API FUNCTIONS
   reports_dpath_search
-    Takes an extended DPath expression, applies it to an Tapper Reports
-    with TAP::DOM structure and returns the matching results in an array.
+    Takes an extended DPath expression, applies it to Tapper Reports with
+    TAP::DOM structure and returns the matching results in an array.
 
   rds
     Alias for reports_dpath_search.

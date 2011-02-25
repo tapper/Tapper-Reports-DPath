@@ -380,7 +380,7 @@ the DB.
 
 =head2 reports_dpath_search
 
-Takes an extended DPath expression, applies it to an Tapper Reports
+Takes an extended DPath expression, applies it to Tapper Reports
 with TAP::DOM structure and returns the matching results in an array.
 
 =head2 rds
