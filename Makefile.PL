@@ -28,6 +28,8 @@ build_requires 'Test::Perl::Critic';
 build_requires 'Tapper::Schema::TestTools';
 build_requires 'Test::Fixture::DBIC::Schema';
 
+author_requires 'Module::Install::WriteAll';
+
 makemaker_args(dist => { PREOP => 'pod2text lib/Tapper/Reports/DPath.pm > README' });
 
 WriteAll;
