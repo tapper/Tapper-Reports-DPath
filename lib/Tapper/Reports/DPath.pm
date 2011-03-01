@@ -339,7 +339,7 @@ class Tapper::Reports::DPath is dirty {
 }
 
 package Tapper::Reports::DPath;
-our $VERSION = '2.010022';
+our $VERSION = '3.000001';
 
 1;
 
