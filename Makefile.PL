@@ -5,7 +5,7 @@ use inc::Module::Install;
 
 name     'Tapper-Reports-DPath';
 all_from 'lib/Tapper/Reports/DPath.pm';
-author   'AMD OSRC Tapper Team <tapper@amd64.com>';
+author   'AMD OSRC Tapper Team <tapper@amd64.org>';
 license  'freebsd';
 
 requires 'perl'                  => 5.010;
