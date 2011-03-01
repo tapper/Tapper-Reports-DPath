@@ -347,7 +347,7 @@ __END__
 
 =head1 NAME
 
-Tapper::Reports::DPath - Extended DPath access to Tapper reports.
+Tapper::Reports::DPath - Tapper - Extended DPath functionality for Tapper reports
 
 =head1 SYNOPSIS
 
