@@ -1,5 +1,6 @@
 NAME
-    Tapper::Reports::DPath - Extended DPath access to Tapper reports.
+    Tapper::Reports::DPath - Tapper - Extended DPath functionality for
+    Tapper reports
 
 SYNOPSIS
         use Tapper::Reports::DPath 'reports_dpath_search';
