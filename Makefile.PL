@@ -17,9 +17,9 @@ requires 'HTML::Mason'           => "1.40";
 requires 'Data::DPath'           => '0.33';
 requires 'Sub::Exporter'         => '0.982';
 requires 'File::ShareDir'        => 0;
-requires 'Tapper::Config'        => "3.000001";
-requires 'Tapper::Schema'        => "3.000001";
-requires 'Tapper::Model'         => "3.000001";
+requires 'Tapper::Config'        => "3.000002";
+requires 'Tapper::Schema'        => "3.000002";
+requires 'Tapper::Model'         => "3.000002";
 requires 'Cache::FileCache'      => 0;
 requires 'Data::Structure::Util' => 0;
 
