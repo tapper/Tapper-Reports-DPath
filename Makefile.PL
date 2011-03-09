@@ -17,6 +17,7 @@ requires 'HTML::Mason'           => "1.40";
 requires 'Data::DPath'           => '0.33';
 requires 'Sub::Exporter'         => '0.982';
 requires 'File::ShareDir'        => 0;
+requires 'MooseX::Declare'       => "0.34";
 requires 'Tapper::Config'        => "3.000002";
 requires 'Tapper::Schema'        => "3.000002";
 requires 'Tapper::Model'         => "3.000002";
