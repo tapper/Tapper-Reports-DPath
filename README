@@ -1,60 +1,33 @@
-NAME
-    Tapper::Reports::DPath - Tapper - Extended DPath functionality for
-    Tapper reports
+Tapper-Reports-DPath
+====================
 
-SYNOPSIS
-        use Tapper::Reports::DPath 'reports_dpath_search';
-        # the first bogomips entry of math sections:
-        @resultlist = reportdata (
-                         '{ suite_name => "TestSuite-LmBench" } :: /tap/section/math/*/bogomips[0]'
-                      );
-        # all report IDs of suite_id 17 that FAILed:
-        @resultlist = reportdata (
-                         '{ suite_name => "TestSuite-LmBench" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id'
-                      );
+Extended DPath functionality for Tapper reports
 
-     #
-     # '{ "reportgrouptestrun.testrun_id" => 4711 } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id
-     #
-     # '{ "reportgrouparbitrary.arbitrary_id" => "fc123a2" } :: /suite_id[value == 17]/../successgrade[value eq 'FAIL']/../id
 
-    This searches all reports of the test suite "TestSuite-LmBench" and
-    furthermore in them for a TAP section "math" with the particular subtest
-    "bogomips" and takes the first array entry of them.
+About Tapper 
+============
 
-    The part before the '::' selects reports to search in a DBIx::Class
-    search query, the second part is a normal Data::DPath expression that
-    matches against the datastructure that is build from the DB.
+Tapper is an infrastructure for all aspects of testing 
+inclusive Operating Systems and Virtualization.
 
-API FUNCTIONS
-  reports_dpath_search
-    Takes an extended DPath expression, applies it to Tapper Reports with
-    TAP::DOM structure and returns the matching results in an array.
+Tapper contains
 
-  rds
-    Alias for reports_dpath_search.
+ - Automation
+ - Machine Scheduling
+ - Command line utils
+ - Web Frontend application
+ - Support for writing tests
+ - Powerful result evaluation API
+ - Testplan support with TaskJuggler
+ - Many use-cases from tracking test results to
+   benchmarking to full OS testing including virtualization
 
-  reportdata
-    Alias for reports_dpath_search.
+More information about Tapper:
 
-UTILITY FUNCTIONS
-  cache_single_dpath
-    Cache a result for a raw dpath on a report id.
+ - https://github.com/amd/Tapper-Doc/
+ - https://search.cpan.org/~amd/Tapper-Doc/
 
-  cached_single_dpath
-    Return cached result for a raw dpath on a report id.
+Other Tapper subprojects:
 
-  cache_whole_dpath
-    Cache a result for a complete tapper::dpath on all reports.
-
-  cached_whole_dpath
-    Return cached result for a complete tapper::dpath on all reports.
-
-AUTHOR
-    AMD OSRC Tapper Team, "<tapper at amd64.org>"
-
-COPYRIGHT & LICENSE
-    Copyright 2008-2011 AMD OSRC Tapper Team, all rights reserved.
-
-    This program is released under the following license: proprietary
-
+ - https://github.com/amd
+ - https://search.cpan.org/~amd
