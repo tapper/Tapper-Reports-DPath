@@ -31,7 +31,8 @@ build_requires 'Test::Fixture::DBIC::Schema';
 
 author_requires 'Module::Install::WriteAll';
 
-makemaker_args(dist => { PREOP => 'pod2text lib/Tapper/Reports/DPath.pm > README' });
+repository 'git://github.com/amd/Tapper-Reports-DPath.git';
+bugtracker 'http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Tapper-Reports-DPath';
 
 WriteAll;
 
