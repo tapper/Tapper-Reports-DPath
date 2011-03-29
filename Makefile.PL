@@ -5,7 +5,7 @@ use inc::Module::Install;
 
 name     'Tapper-Reports-DPath';
 all_from 'lib/Tapper/Reports/DPath.pm';
-author   'OSRC SysInt Team <osrc-sysint@elbe.amd.com>';
+author   'AMD OSRC Tapper Team <tapper@amd64.org>';
 license  'freebsd';
 
 requires 'perl'                  => 5.010;
@@ -17,9 +17,10 @@ requires 'HTML::Mason'           => "1.40";
 requires 'Data::DPath'           => '0.33';
 requires 'Sub::Exporter'         => '0.982';
 requires 'File::ShareDir'        => 0;
-requires 'Tapper::Config'       => '2.010055';
-requires 'Tapper::Schema'       => '2.010065';
-requires 'Tapper::Model'        => '2.010015';
+requires 'MooseX::Declare'       => "0.34";
+requires 'Tapper::Config'        => "3.000002";
+requires 'Tapper::Schema'        => "3.000002";
+requires 'Tapper::Model'         => "3.000002";
 requires 'Cache::FileCache'      => 0;
 requires 'Data::Structure::Util' => 0;
 
@@ -28,7 +29,10 @@ build_requires 'Test::Perl::Critic';
 build_requires 'Tapper::Schema::TestTools';
 build_requires 'Test::Fixture::DBIC::Schema';
 
-makemaker_args(dist => { PREOP => 'pod2text lib/Tapper/Reports/DPath.pm > README' });
+author_requires 'Module::Install::WriteAll';
+
+repository 'git://github.com/amd/Tapper-Reports-DPath.git';
+bugtracker 'http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Tapper-Reports-DPath';
 
 WriteAll;
 

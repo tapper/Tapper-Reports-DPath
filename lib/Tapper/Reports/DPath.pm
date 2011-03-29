@@ -339,7 +339,7 @@ class Tapper::Reports::DPath is dirty {
 }
 
 package Tapper::Reports::DPath;
-our $VERSION = '2.010022';
+our $VERSION = '3.000004';
 
 1;
 
@@ -347,7 +347,7 @@ __END__
 
 =head1 NAME
 
-Tapper::Reports::DPath - Extended DPath access to Tapper reports.
+Tapper::Reports::DPath - Tapper - Extended DPath functionality for Tapper reports
 
 =head1 SYNOPSIS
 
@@ -380,7 +380,7 @@ the DB.
 
 =head2 reports_dpath_search
 
-Takes an extended DPath expression, applies it to an Tapper Reports
+Takes an extended DPath expression, applies it to Tapper Reports
 with TAP::DOM structure and returns the matching results in an array.
 
 =head2 rds
@@ -412,11 +412,11 @@ Return cached result for a complete tapper::dpath on all reports.
 
 =head1 AUTHOR
 
-OSRC SysInt Team, C<< <osrc-sysint at elbe.amd.com> >>
+AMD OSRC Tapper Team, C<< <tapper at amd64.org> >>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2008 OSRC SysInt Team, all rights reserved.
+Copyright 2008-2011 AMD OSRC Tapper Team, all rights reserved.
 
 This program is released under the following license: proprietary
 
