@@ -10,11 +10,6 @@ About Tapper
 Tapper is an infrastructure for all aspects of testing 
 inclusive Operating Systems and Virtualization.
 
-API FUNCTIONS
-  reports_dpath_search
-    Takes an extended DPath expression, applies it to a Tapper Reports with
-    TAP::DOM structure and returns the matching results in an array.
-
 Tapper contains
 
  - Automation
