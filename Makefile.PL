@@ -18,15 +18,15 @@ requires 'Data::DPath'           => '0.33';
 requires 'Sub::Exporter'         => '0.982';
 requires 'File::ShareDir'        => 0;
 requires 'MooseX::Declare'       => "0.34";
-requires 'Tapper::Config' => 3.000010";
-requires 'Tapper::Schema' => 3.000010";
-requires 'Tapper::Model' => 3.000010";
+requires 'Tapper::Config' => "3.000010";
+requires 'Tapper::Schema' => "3.000010";
+requires 'Tapper::Model' => "3.000010";
 requires 'Cache::FileCache'      => 0;
 requires 'Data::Structure::Util' => 0;
 
 build_requires 'Test::More';
 build_requires 'Test::Perl::Critic';
-build_requires 'Tapper::Schema::TestTools' => 3.000010";
+build_requires 'Tapper::Schema::TestTools' => "3.000010";
 build_requires 'Test::Fixture::DBIC::Schema';
 
 author_requires 'Module::Install::WriteAll';
