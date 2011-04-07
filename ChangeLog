@@ -1,3 +1,11 @@
+2011-04-07  Steffen Schwigon  <steffen.schwigon@amd.com>
+
+	* v3.0.10
+
+	* enable reportdata() (the primary report api function) 
+	  in TT templates
+	* release version++ roundhouse kick
+
 2011-03-30 Steffen Schwigon <steffen.schwigon@amd.com>
 
 	* v3.0.5
