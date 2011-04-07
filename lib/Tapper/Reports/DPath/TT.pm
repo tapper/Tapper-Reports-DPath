@@ -41,7 +41,7 @@ class Tapper::Reports::DPath::TT {
                 my $outbuf;
                 my $tt = $self->get_template();
 
-                if(not $tt->process(\$template, {}, \$outbuf)) {
+                if(not $tt->process(\$template, {reportdata => \&reportdata}, \$outbuf)) {
                         die Template->error();
                         my $msg = "Tapper::Reports::DPath::TT::render_template: $Template::ERROR\n";
                         print STDERR $msg;
