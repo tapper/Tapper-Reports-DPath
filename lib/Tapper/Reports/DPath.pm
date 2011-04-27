@@ -9,7 +9,7 @@ class Tapper::Reports::DPath is dirty {
         use Text::Balanced 'extract_codeblock';
         use Data::DPath::Path;
         use Data::Dumper;
-        use Cache::FileCache;
+        use CHI;
 
         use Sub::Exporter -setup => { exports =>           [ 'reportdata' ],
                                       groups  => { all  => [ 'reportdata' ] },
@@ -62,8 +62,11 @@ class Tapper::Reports::DPath is dirty {
 
                 return if $ENV{HARNESS_ACTIVE};
 
-                my $cache = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
+                my $cache = CHI->new( driver => 'File',
+                                      root_dir => '/tmp/cache/dpath',
+                                    );
+
+                $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
 
                 # we cache on the dpath
                 # but need count to verify and maintain cache validity
@@ -81,8 +84,10 @@ class Tapper::Reports::DPath is dirty {
 
                 return if $ENV{HARNESS_ACTIVE};
 
-                my $cache      = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
+                my $cache = CHI->new( driver => 'File',
+                                      root_dir => '/tmp/cache/dpath',
+                                    );
+                $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
 
                 my $cached_res_count = $cached_res->{count} || 0;
@@ -113,9 +118,10 @@ class Tapper::Reports::DPath is dirty {
 
                 return if $ENV{HARNESS_ACTIVE};
 
-                my $cache = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
-#                say STDERR "  -> set single: $reports_id -- $path";
+                my $cache = CHI->new( driver => 'File',
+                                      root_dir => '/tmp/cache/dpath',
+                                    );
+                $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
                              $res
                            );
@@ -126,8 +132,10 @@ class Tapper::Reports::DPath is dirty {
 
                 return if $ENV{HARNESS_ACTIVE};
 
-                my $cache      = new Cache::FileCache;
-                $cache->Clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
+                my $cache = CHI->new( driver => 'File',
+                                      root_dir => '/tmp/cache/dpath',
+                                    );
+                $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
 
 #                print STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);

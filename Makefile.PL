@@ -21,8 +21,8 @@ requires 'MooseX::Declare'       => "0.34";
 requires 'Tapper::Config' => "3.000010";
 requires 'Tapper::Schema' => "3.000010";
 requires 'Tapper::Model' => "3.000010";
-requires 'Cache::FileCache'      => 0;
 requires 'Data::Structure::Util' => 0;
+requires 'CHI'                   => 0;
 
 build_requires 'Test::More';
 build_requires 'Test::Perl::Critic';
