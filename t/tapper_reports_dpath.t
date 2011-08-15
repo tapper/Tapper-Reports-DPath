@@ -14,7 +14,6 @@ use Data::Dumper;
 use Test::Deep;
 
 print "TAP Version 13\n";
-plan tests => 63;
 
 # -------------------- path division --------------------
 
@@ -109,6 +108,14 @@ is(scalar @res, 8,  "count ALL plans including sections - no braces" );
 @res = reportdata '{ "report.id" => 23 } :: //tap/tests_planned';
 is(scalar @res, 2,  "id + dpath - all sections" );
 
+@res = reportdata '
+                   {
+                    "report.id" => 23
+                   }
+                   :: //tap/tests_planned
+                  ';
+is(scalar @res, 2,  "id + dpath - all sections + newlines" );
+
 @res = reportdata '{ id => 23 } :: //section-000/tap/tests_planned';
 is(scalar @res, 1,  "id + dpath - section 0" );
 is($res[0], 4,  "id + dpath - section 0 tests_planned" );
@@ -162,3 +169,5 @@ is ($report_data->{results}[0]{section}{'Metainfo'}{tap}{tests_planned}, 2,     
 is ($report_data->{results}[1]{section}{'XEN-Metainfo'}{tap}{tests_planned}, 1,                             "full report - section 1 - tests_planned");
 is ($report_data->{results}[2]{section}{'guest_1_suse_sles10_sp3_rc2_32b_smp_qcow'}{tap}{tests_planned}, 1, "full report - section 2 - tests_planned");
 is ($report_data->{results}[3]{section}{'guest_2_opensuse_11_1_32b_qcow'}{tap}{tests_planned}, 1,           "full report - section 3 - tests_planned");
+
+done_testing;
