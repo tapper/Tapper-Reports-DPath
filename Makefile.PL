@@ -22,6 +22,7 @@ requires 'Tapper::Config' => "3.000010";
 requires 'Tapper::Schema' => "3.000010";
 requires 'Tapper::Model' => "3.000010";
 requires 'Data::Structure::Util' => 0;
+requires 'Data::Serializer'; # needed by CHI using non-default serializer
 requires 'CHI'                   => 0;
 
 build_requires 'Test::More' => '0.88';

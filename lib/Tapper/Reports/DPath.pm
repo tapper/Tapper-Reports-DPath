@@ -64,6 +64,8 @@ class Tapper::Reports::DPath is dirty {
 
                 my $cache = CHI->new( driver => 'File',
                                       root_dir => '/tmp/cache/dpath',
+                                      serializer => 'Data::Dumper',
+                                      compress => 1,
                                     );
 
                 $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
@@ -86,6 +88,8 @@ class Tapper::Reports::DPath is dirty {
 
                 my $cache = CHI->new( driver => 'File',
                                       root_dir => '/tmp/cache/dpath',
+                                      serializer => 'Data::Dumper',
+                                      compress => 1,
                                     );
                 $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
@@ -120,6 +124,8 @@ class Tapper::Reports::DPath is dirty {
 
                 my $cache = CHI->new( driver => 'File',
                                       root_dir => '/tmp/cache/dpath',
+                                      serializer => 'Data::Dumper',
+                                      compress => 1,
                                     );
                 $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 $cache->set( _cachekey_single_dpath( $path, $reports_id ),
@@ -134,6 +140,8 @@ class Tapper::Reports::DPath is dirty {
 
                 my $cache = CHI->new( driver => 'File',
                                       root_dir => '/tmp/cache/dpath',
+                                      serializer => 'Data::Dumper',
+                                      compress => 1,
                                     );
                 $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
                 my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
