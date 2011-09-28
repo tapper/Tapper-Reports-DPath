@@ -49,6 +49,13 @@ is(Tapper::Reports::DPath::_fix_condition('{ "me.id" => 23 }'),     '{ "me.id" =
 is(Tapper::Reports::DPath::_fix_condition('{ "report.id" => 23 }'), '{ "me.id" => 23 }', "allow easier report.id column 4");
 is(Tapper::Reports::DPath::_fix_condition('{ -and => 23 }'),        '{ -and => 23 }',    "allow easier report.id column 5");
 
+is(Tapper::Reports::DPath::_fix_condition('{ suite_name => "perfmon" }'),                    '{ "suite.name" => "perfmon" }', "allow easier suite.name column / simple underscore");
+is(Tapper::Reports::DPath::_fix_condition('{ "suite.name" => "perfmon" }'),                  '{ "suite.name" => "perfmon" }', "allow easier suite.name column / simple dot");
+is(Tapper::Reports::DPath::_fix_condition('{ suite_name => { like => "perfmon" } }'),        '{ "suite.name" => { like => "perfmon" } }', "allow easier suite.name column / like underscore");
+is(Tapper::Reports::DPath::_fix_condition('{ "suite.name" => { like => "perfmon" } }'),      '{ "suite.name" => { like => "perfmon" } }', "allow easier suite.name column / like dot");
+is(Tapper::Reports::DPath::_fix_condition('{ suite_name => { "like" => "perfmon" } }'),        '{ "suite.name" => { "like" => "perfmon" } }', "allow easier suite.name column / quoted like underscore");
+is(Tapper::Reports::DPath::_fix_condition('{ "suite.name" => { "like" => "perfmon" } }'),      '{ "suite.name" => { "like" => "perfmon" } }', "allow easier suite.name column / quoted like dot");
+
 # multi
 is(Tapper::Reports::DPath::_fix_condition('{ id => 23, suite_name => "perfmon" }'),          '{ "me.id" => 23, "suite.name" => "perfmon" }', "allow easier suite.name column 1");
 is(Tapper::Reports::DPath::_fix_condition('{ "id" => 23, suite_name => "perfmon" }'),        '{ "me.id" => 23, "suite.name" => "perfmon" }', "allow easier suite.name column 2");
