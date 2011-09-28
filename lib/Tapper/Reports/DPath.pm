@@ -11,6 +11,8 @@ class Tapper::Reports::DPath is dirty {
         use Data::Dumper;
         use CHI;
 
+        our $puresqlabstract = 0;
+
         use Sub::Exporter -setup => { exports =>           [ 'reportdata' ],
                                       groups  => { all  => [ 'reportdata' ] },
                                     };
@@ -158,8 +160,7 @@ class Tapper::Reports::DPath is dirty {
 
                 my ($condition, $path) = _extract_condition_and_part($reports_path);
                 my $dpath              = new Data::DPath::Path( path => $path );
-                $condition             = _fix_condition($condition);
-                #say STDERR "condition: ".($condition || '');
+                $condition             = _fix_condition($condition) unless $puresqlabstract;
                 my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
                 my $rs = model('ReportsDB')->resultset('Report')->search
                     (

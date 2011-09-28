@@ -9,15 +9,19 @@ class Tapper::Reports::DPath::Mason {
         use Data::Dumper;
         use File::ShareDir 'module_dir';
 
-        has debug => ( is => 'rw');
+        has debug           => ( is => 'rw');
+        has puresqlabstract => ( is => 'rw', default => 0);
 
         method render (:$file?, :$template?) {
                 return $self->render_file     ($file) if $file;
                 return $self->render_template ($template) if $template;
         }
+
         method render_template ($template) {
                 my $outbuf;
                 my $comp_root = module_dir('Tapper::Reports::DPath::Mason');
+
+                local $Tapper::Reports::DPath::puresqlabstract = $self->puresqlabstract;
                 my $interp = new HTML::Mason::Interp
                     (
                      use_object_files => 1,

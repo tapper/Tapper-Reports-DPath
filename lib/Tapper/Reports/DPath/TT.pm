@@ -19,8 +19,8 @@ class Tapper::Reports::DPath::TT {
         use Data::Structure::Util 'unbless';
         # END needed inside the TT template for vmethods
 
-
-        has debug => ( is => 'rw');
+        has debug           => ( is => 'rw');
+        has puresqlabstract => ( is => 'rw', default => 0);
 
         method get_template()
         {
@@ -42,6 +42,7 @@ class Tapper::Reports::DPath::TT {
                 my $outbuf;
                 my $tt = $self->get_template();
 
+                local $Tapper::Reports::DPath::puresqlabstract = $self->puresqlabstract;
                 if(not $tt->process(\$template, {reportdata => \&reportdata}, \$outbuf)) {
                         my $msg = "Error in Tapper::Reports::DPath::TT::render_template: ".$tt->error."\n";
                         print STDERR $msg;
