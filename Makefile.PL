@@ -13,6 +13,7 @@ requires 'JSON'                  => 0;
 requires 'parent'                => 0;
 requires 'DateTime'              => 0;
 requires 'Template'              => 0;
+requires 'Template::Plugin::Autoformat' => 0;
 requires 'HTML::Mason'           => "1.40";
 requires 'Data::DPath'           => '0.33';
 requires 'Sub::Exporter'         => '0.982';
