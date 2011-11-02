@@ -12,6 +12,7 @@ requires 'perl'                  => 5.010;
 requires 'JSON'                  => 0;
 requires 'parent'                => 0;
 requires 'DateTime'              => 0;
+requires 'DateTime::Event::Recurrence' => 0;
 requires 'Template'              => 0;
 requires 'Template::Plugin::Autoformat' => 0;
 requires 'HTML::Mason'           => "1.40";
