@@ -331,6 +331,14 @@ class Tapper::Reports::DPath is dirty {
         {
                 my ($report) = @_;
 
+
+                my %hardwaredb_overview;
+                # hardwaredb overview done differently (but how?)
+                # my $lid              = $report->hardwaredb_systems_id || get_systems_id_for_hostname($report->machine_name);
+                my $host_id          = model('TestrunDB')->resultset("Host")->search({name => $report->machine_name})->first->id;
+                my $hwdb             = get_hardware_overview($host_id);
+                %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
+
                 my $reportgroupstats = _reportgroupstats($report);
 
                 my $simple_hash = {
@@ -342,6 +350,7 @@ class Tapper::Reports::DPath is dirty {
                                                     machine_name             => $report->machine_name || 'unknown',
                                                     created_at_ymd_hms       => $report->created_at->ymd('-')." ".$report->created_at->hms(':'),
                                                     created_at_ymd           => $report->created_at->ymd('-'),
+                                                    %hardwaredb_overview,
                                                     groupstats               => {
                                                                                  DEPRECATED => 'BETTER_USE_groupstats_FROM_ONE_LEVEL_ABOVE',
                                                                                  %$reportgroupstats,
