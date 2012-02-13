@@ -29,7 +29,7 @@ requires 'CHI'                   => 0;
 
 build_requires 'Test::More' => '0.88';
 build_requires 'Test::Perl::Critic';
-build_requires 'Tapper::Schema::TestTools' => "3.000010";
+build_requires 'Tapper::Schema' => "3.000010";
 build_requires 'Test::Fixture::DBIC::Schema';
 
 author_requires 'Module::Install::WriteAll';
