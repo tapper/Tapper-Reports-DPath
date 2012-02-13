@@ -331,13 +331,14 @@ class Tapper::Reports::DPath is dirty {
         {
                 my ($report) = @_;
 
-
-                my %hardwaredb_overview;
+                my %hardwaredb_overview = ();
                 # hardwaredb overview done differently (but how?)
                 # my $lid              = $report->hardwaredb_systems_id || get_systems_id_for_hostname($report->machine_name);
-                my $host_id          = model('TestrunDB')->resultset("Host")->search({name => $report->machine_name})->first->id;
-                my $hwdb             = get_hardware_overview($host_id);
-                %hardwaredb_overview = %$hwdb ? (hardwaredb => $hwdb) : ();
+                my $host             = model('TestrunDB')->resultset("Host")->search({name => $report->machine_name})->first;
+                if ($host) {
+                        my $hwdb             = get_hardware_overview($host->id);
+                        %hardwaredb_overview = (hardwaredb => $hwdb) if $hwdb;
+                }
 
                 my $reportgroupstats = _reportgroupstats($report);
 
