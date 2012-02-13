@@ -15,7 +15,7 @@ class Tapper::Reports::DPath::TT {
         use Data::DPath 'dpath';
         use DateTime;
         use JSON;
-        use YAML;
+        use YAML::XS;
         use Data::Structure::Util 'unbless';
         # END needed inside the TT template for vmethods
 
@@ -28,7 +28,7 @@ class Tapper::Reports::DPath::TT {
                 $Template::Stash::SCALAR_OPS->{reportdata} = sub { reportdata($_[0]) };
                 $Template::Stash::SCALAR_OPS->{match}      = sub { my ($path, $data) = @_; dpath($path)->match($data); };
                 $Template::Stash::LIST_OPS->{to_json}      = sub { JSON->new->pretty->encode(unbless $_[0]) };
-                $Template::Stash::LIST_OPS->{to_yaml}      = sub { YAML::Dump(unbless $_[0])    };
+                $Template::Stash::LIST_OPS->{to_yaml}      = sub { YAML::XS::Dump(unbless $_[0])    };
                 $Template::Stash::LIST_OPS->{Dumper}       = sub { Dumper @_ };
                 return $tt;
         }
