@@ -4,5 +4,5 @@
 % use Data::DPath 'dpath';
 % use DateTime;
 % use JSON;
-% use YAML;
+% use YAML::XS;
 % use Data::Structure::Util 'unbless';
