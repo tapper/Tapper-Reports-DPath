@@ -21,6 +21,9 @@ class Tapper::Reports::DPath::TT {
 
         has debug           => ( is => 'rw');
         has puresqlabstract => ( is => 'rw', default => 0);
+        has include_path    => ( is => 'rw', default => "");
+        has substitutes     => ( is => 'rw', default => undef);
+        has eval_perl       => ( is => 'rw', default => 0);
 
         method get_template()
         {
