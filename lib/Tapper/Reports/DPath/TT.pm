@@ -27,7 +27,9 @@ class Tapper::Reports::DPath::TT {
 
         method get_template()
         {
-                my $tt = Template->new(EVAL_PERL => 0);
+                my $tt = Template->new({EVAL_PERL => $self->eval_perl,
+                                       $self->include_path ? (INCLUDE_PATH => $self->include_path) : (),
+                                      });
                 $Template::Stash::SCALAR_OPS->{reportdata} = sub { reportdata($_[0]) };
                 $Template::Stash::SCALAR_OPS->{match}      = sub { my ($path, $data) = @_; dpath($path)->match($data); };
                 $Template::Stash::LIST_OPS->{to_json}      = sub { JSON->new->pretty->encode(unbless $_[0]) };
