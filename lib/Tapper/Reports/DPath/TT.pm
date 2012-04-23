@@ -48,7 +48,9 @@ class Tapper::Reports::DPath::TT {
                 my $tt = $self->get_template();
 
                 local $Tapper::Reports::DPath::puresqlabstract = $self->puresqlabstract;
-                if(not $tt->process(\$template, {reportdata => \&reportdata}, \$outbuf)) {
+                if(not $tt->process(\$template, {reportdata => \&reportdata,
+                                                 defined $self->substitutes ? ( %{$self->substitutes} ) : (),
+                                                }, \$outbuf)) {
                         my $msg = "Error in Tapper::Reports::DPath::TT::render_template: ".$tt->error."\n";
                         print STDERR $msg;
                         return $msg if $self->debug;
