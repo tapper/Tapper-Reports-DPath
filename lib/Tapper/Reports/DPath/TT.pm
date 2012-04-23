@@ -31,13 +31,12 @@ class Tapper::Reports::DPath::TT {
                                        $self->include_path ? (INCLUDE_PATH => $self->include_path) : (),
                                       });
                 $Template::Stash::SCALAR_OPS->{reportdata} = sub { reportdata($_[0]) };
-                $Template::Stash::SCALAR_OPS->{match}      = sub { my ($path, $data) = @_; dpath($path)->match($data); };
+                $Template::Stash::SCALAR_OPS->{dpath_match}= sub { my ($path, $data) = @_; dpath($path)->match($data); };
                 $Template::Stash::LIST_OPS->{to_json}      = sub { JSON->new->pretty->encode(unbless $_[0]) };
                 $Template::Stash::LIST_OPS->{to_yaml}      = sub { YAML::XS::Dump(unbless $_[0])    };
                 $Template::Stash::LIST_OPS->{Dumper}       = sub { Dumper @_ };
                 return $tt;
         }
-
 
         method render (:$file?, :$template?) {
                 return $self->render_file     ($file) if $file;
@@ -72,7 +71,6 @@ class Tapper::Reports::DPath::TT {
                 }
                 return $outbuf;
         }
- 
 }
 
 1;
