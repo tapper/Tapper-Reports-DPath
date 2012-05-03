@@ -11,6 +11,7 @@ class Tapper::Reports::DPath::TT {
         use Template::Stash;
         # BEGIN needed inside the TT template for vmethods
         use Tapper::Reports::DPath 'reportdata';
+        use Tapper::Model 'model';
         use Data::Dumper;
         use Data::DPath 'dpath';
         use DateTime;
@@ -38,6 +39,21 @@ class Tapper::Reports::DPath::TT {
                 return $tt;
         }
 
+        sub testrundb_hostnames {
+                my $host_iter = model('TestrunDB')->resultset("Host")->search({ });
+                my %hosts = ();
+                while (my $h = $host_iter->next) {
+                        $hosts{$h->name} = { id         => $h->id,
+                                             name       => $h->name,
+                                             free       => $h->free,
+                                             active     => $h->active,
+                                             comment    => $h->comment,
+                                             is_deleted => $h->is_deleted,
+                                         };
+                }
+                return \%hosts;
+        }
+
         method render (:$file?, :$template?) {
                 return $self->render_file     ($file) if $file;
                 return $self->render_template ($template) if $template;
@@ -48,6 +64,7 @@ class Tapper::Reports::DPath::TT {
 
                 local $Tapper::Reports::DPath::puresqlabstract = $self->puresqlabstract;
                 if(not $tt->process(\$template, {reportdata => \&reportdata,
+                                                 testrundb_hostnames => \&testrundb_hostnames,
                                                  defined $self->substitutes ? ( %{$self->substitutes} ) : (),
                                                 }, \$outbuf)) {
                         my $msg = "Error in Tapper::Reports::DPath::TT::render_template: ".$tt->error."\n";
