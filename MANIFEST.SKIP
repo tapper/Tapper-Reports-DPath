@@ -1,8 +1,0 @@
-^.git
-build\b
-blib\b
-\.(?:bak|o|c|bs)$
-^Makefile$
-^Makefile.old$
-^Debian
-^Tapper-Reports-DPath-

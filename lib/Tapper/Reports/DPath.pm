@@ -364,15 +364,12 @@ class Tapper::Reports::DPath is dirty {
 }
 
 package Tapper::Reports::DPath;
-our $VERSION = '3.000011';
+# ABSTRACT: Tapper - Extended DPath functionality for Tapper reports
+
 
 1;
 
 __END__
-
-=head1 NAME
-
-Tapper::Reports::DPath - Tapper - Extended DPath functionality for Tapper reports
 
 =head1 SYNOPSIS
 
@@ -401,50 +398,48 @@ search query, the second part is a normal L<Data::DPath|Data::DPath>
 expression that matches against the datastructure that is build from
 the DB.
 
+
 =head1 API FUNCTIONS
+
 
 =head2 reports_dpath_search
 
 Takes an extended DPath expression, applies it to Tapper Reports
 with TAP::DOM structure and returns the matching results in an array.
 
+
 =head2 rds
 
 Alias for reports_dpath_search.
+
 
 =head2 reportdata
 
 Alias for reports_dpath_search.
 
 
+
 =head1 UTILITY FUNCTIONS
+
 
 =head2 cache_single_dpath
 
 Cache a result for a raw dpath on a report id.
 
+
 =head2 cached_single_dpath
 
 Return cached result for a raw dpath on a report id.
+
 
 =head2 cache_whole_dpath
 
 Cache a result for a complete tapper::dpath on all reports.
 
+
 =head2 cached_whole_dpath
 
 Return cached result for a complete tapper::dpath on all reports.
-
-=head1 AUTHOR
-
-AMD OSRC Tapper Team, C<< <tapper at amd64.org> >>
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2008-2011 AMD OSRC Tapper Team, all rights reserved.
-
-This program is released under the following license: proprietary
-
 
 =cut
 
