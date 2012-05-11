@@ -60,7 +60,7 @@ is($tt->render(template => $template), $expected, "tt template with reportdata")
 $template = q|
 [% dpath =  '//tests_planned' -%]
 [% data  = [ { tests_planned => 1}, { tests_planned => 2}, { tests_planned => 3}, { tests_planned => 4}] -%]
-[% res   = dpath.match(data) -%]
+[% res   = dpath.dpath_match(data) -%]
 Planned tests:
 [% FOREACH r IN res -%]
   [% r %]

@@ -1,9 +1,9 @@
-use MooseX::Declare;
-
-use 5.010;
-
 ## no critic (RequireUseStrict)
-class Tapper::Reports::DPath is dirty {
+package Tapper::Reports::DPath;
+# ABSTRACT: Tapper - Extended DPath functionality for Tapper reports
+
+        use 5.010;
+        use Moose;
 
         use Tapper::Model 'model', 'get_hardware_overview'; #, 'get_systems_id_for_hostname'
         use Text::Balanced 'extract_codeblock';
@@ -360,13 +360,6 @@ class Tapper::Reports::DPath is dirty {
                                   };
                 return $simple_hash;
         }
-
-}
-
-package Tapper::Reports::DPath;
-# ABSTRACT: Tapper - Extended DPath functionality for Tapper reports
-
-
 1;
 
 __END__

@@ -1,9 +1,10 @@
-use MooseX::Declare;
-
-use 5.010;
-
 ## no critic (RequireUseStrict)
-class Tapper::Reports::DPath::Mason {
+package Tapper::Reports::DPath::Mason;
+# ABSTRACT: Mix DPath into Mason templates
+
+        use 5.010;
+        use Moose;
+
         use HTML::Mason;
         use Cwd 'cwd';
         use Data::Dumper;
@@ -12,12 +13,19 @@ class Tapper::Reports::DPath::Mason {
         has debug           => ( is => 'rw');
         has puresqlabstract => ( is => 'rw', default => 0);
 
-        method render (:$file?, :$template?) {
-                return $self->render_file     ($file) if $file;
+        sub render {
+                my ($self, %args) = @_;
+
+                my $file     = $args{file};
+                my $template = $args{template};
+
+                return $self->render_file     ($file)     if $file;
                 return $self->render_template ($template) if $template;
         }
 
-        method render_template ($template) {
+        sub render_template {
+                my ($self, $template) = @_;
+
                 my $outbuf;
                 my $comp_root = module_dir('Tapper::Reports::DPath::Mason');
 
@@ -54,7 +62,8 @@ class Tapper::Reports::DPath::Mason {
                 return $outbuf;
         }
 
-        method render_file ($file) {
+        sub render_file {
+                my ($self, $file) = @_;
 
                 # must be absolute to mason, although meant relative in real world
                 $file = "/$file" unless $file =~ m(^/);
@@ -83,15 +92,10 @@ class Tapper::Reports::DPath::Mason {
                 }
                 return $outbuf;
         }
-}
 
 1;
 
 __END__
-
-=head1 NAME
-
-Tapper::Reports::DPath::Mason - Mix DPath into Mason templates
 
 =head1 SYNOPSIS
 
@@ -99,24 +103,18 @@ Tapper::Reports::DPath::Mason - Mix DPath into Mason templates
     $result = render file => $filename;
     $result = render template => $string;
 
-=head1 EXPORT
-
-=head1 METHODS and FUNCTIONS
+=head1 METHODS
 
 =head2 render
 
-Renders a template.
+Render file or template.
 
-=head1 AUTHOR
+=head2 render_file
 
-AMD OSRC Tapper Team, C<< <tapper at amd64.org> >>
+Render file.
 
-=head1 COPYRIGHT & LICENSE
+=head2 render_template
 
-Copyright 2008-2011 AMD OSRC Tapper Team, all rights reserved.
-
-This program is released under the following license: proprietary
-
+Render template.
 
 =cut
-

@@ -1,15 +1,16 @@
-use MooseX::Declare;
-
-use 5.010;
-
 ## no critic (RequireUseStrict)
-class Tapper::Reports::DPath::TT {
+package Tapper::Reports::DPath::TT;
+# ABSTRACT: Mix DPath into Template-Toolkit templates
+
+        use 5.010;
+        use Moose;
         use Template;
         use Cwd 'cwd';
         use Data::Dumper;
 
         use Template::Stash;
-        # BEGIN needed inside the TT template for vmethods
+
+        # modules needed inside the TT template for vmethods
         use Tapper::Reports::DPath 'reportdata';
         use Tapper::Model 'model';
         use Data::Dumper;
@@ -18,7 +19,6 @@ class Tapper::Reports::DPath::TT {
         use JSON;
         use YAML::XS;
         use Data::Structure::Util 'unbless';
-        # END needed inside the TT template for vmethods
 
         has debug           => ( is => 'rw');
         has puresqlabstract => ( is => 'rw', default => 0);
@@ -26,8 +26,10 @@ class Tapper::Reports::DPath::TT {
         has substitutes     => ( is => 'rw', default => undef);
         has eval_perl       => ( is => 'rw', default => 0);
 
-        method get_template()
+        sub get_template
         {
+                my ($self) = @_;
+
                 my $tt = Template->new({EVAL_PERL => $self->eval_perl,
                                        $self->include_path ? (INCLUDE_PATH => $self->include_path) : (),
                                       });
@@ -54,11 +56,19 @@ class Tapper::Reports::DPath::TT {
                 return \%hosts;
         }
 
-        method render (:$file?, :$template?) {
-                return $self->render_file     ($file) if $file;
+        sub render {
+                my ($self, %args) = @_;
+
+                my $file     = $args{file};
+                my $template = $args{template};
+
+                return $self->render_file     ($file)     if $file;
                 return $self->render_template ($template) if $template;
         }
-        method render_template ($template) {
+
+        sub render_template {
+                my ($self, $template) = @_;
+
                 my $outbuf;
                 my $tt = $self->get_template();
 
@@ -75,7 +85,9 @@ class Tapper::Reports::DPath::TT {
                 return $outbuf;
         }
 
-        method render_file ($file) {
+        sub render_file {
+                my ($self, $file) = @_;
+
                 my $outbuf;
                 my $tt = $self->get_template();
 
@@ -88,15 +100,11 @@ class Tapper::Reports::DPath::TT {
                 }
                 return $outbuf;
         }
-}
+
 
 1;
 
 __END__
-
-=head1 NAME
-
-Tapper::Reports::DPath::Mason - Mix DPath into Mason templates
 
 =head1 SYNOPSIS
 
@@ -104,24 +112,27 @@ Tapper::Reports::DPath::Mason - Mix DPath into Mason templates
     $result = render file => $filename;
     $result = render template => $string;
 
-=head1 EXPORT
+=head1 METHODS
 
-=head1 METHODS and FUNCTIONS
+=head2 get_template
+
+Render template processor with complete Tapper prelude set.
 
 =head2 render
 
-Renders a template.
+Render file or template.
 
-=head1 AUTHOR
+=head2 render_file
 
-AMD OSRC Tapper Team, C<< <tapper at amd64.org> >>
+Render file.
 
-=head1 COPYRIGHT & LICENSE
+=head2 render_template
 
-Copyright 2008-2011 AMD OSRC Tapper Team, all rights reserved.
+Render template.
 
-This program is released under the following license: proprietary
+=head2 testrundb_hostnames
 
+Provide list of hosts from Tapper TestrunDB to be accessible in
+templates.
 
 =cut
-
