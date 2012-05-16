@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+4.0.1     2012-05-16
         - [FEAT] provide testrundb_hostnames to templates
         - [FEAT] provide Template::Plugin::Autoformat
         - [FEAT] allow pure SQL::Abstract queries in query api
