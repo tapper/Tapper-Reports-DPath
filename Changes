@@ -1,6 +1,14 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+        - [FEAT] provide testrundb_hostnames to templates
+        - [FEAT] provide Template::Plugin::Autoformat
+        - [FEAT] allow pure SQL::Abstract queries in query api
+        - [FIX] error handling of TT handler
+        - [FIX] rename utility vmethod 'match' -> 'dpath_math'
+        - [FIX] substitute YAML with YAML::XS
+        - [FIX] revitalize hardwaredb information
+        - [RFK] substitute Cache with CHI
         - big Dist::Zilla roundhouse kick
 
 2011-04-07  Steffen Schwigon  <steffen.schwigon@amd.com>
