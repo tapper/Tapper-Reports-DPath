@@ -1,4 +1,4 @@
-#!perl
+#! /usr/bin/env perl
 
 use Test::More 0.88;
 
@@ -6,9 +6,9 @@ use Class::C3;
 use MRO::Compat;
 
 BEGIN {
-	use_ok( 'Tapper::Reports::DPath' );
-	use_ok( 'Tapper::Reports::DPath::Mason' );
-	use_ok( 'Tapper::Reports::DPath::TT' );
+        use_ok( 'Tapper::Reports::DPath' );
+        use_ok( 'Tapper::Reports::DPath::Mason' );
+        use_ok( 'Tapper::Reports::DPath::TT' );
 }
 
 # there were some eval problems
