@@ -332,7 +332,7 @@ package Tapper::Reports::DPath;
                 my ($report) = @_;
 
                 my $hwdb;
-                if (my $host  = model('TestrunDB')->resultset("Host")->search({name => $report->machine_name})->first) {
+                if (my $host  = model('TestrunDB')->resultset("Host")->search({name => $report->machine_name}, {rows => 1})->first) {
                         $hwdb = get_hardware_overview($host->id);
                 }
                 my %hardwaredb_overview = (defined($hwdb) and %$hwdb) ? (hardwaredb => $hwdb) : ();
