@@ -93,10 +93,6 @@ package Tapper::Reports::DPath::TT;
 
                 if(not $tt->process($file, {}, \$outbuf)) {
                         die Template->error();
-                        my $msg = "Tapper::Reports::DPath::TT::render_template: $Template::ERROR\n";
-                        print STDERR $msg;
-                        return $msg if $self->debug;
-                        return '';
                 }
                 return $outbuf;
         }
