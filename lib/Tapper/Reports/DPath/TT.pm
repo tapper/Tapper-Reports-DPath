@@ -77,10 +77,7 @@ package Tapper::Reports::DPath::TT;
                                                  testrundb_hostnames => \&testrundb_hostnames,
                                                  defined $self->substitutes ? ( %{$self->substitutes} ) : (),
                                                 }, \$outbuf)) {
-                        my $msg = "Error in Tapper::Reports::DPath::TT::render_template: ".$tt->error."\n";
-                        print STDERR $msg;
-                        return $msg if $self->debug;
-                        return '';
+                        die $tt->error;
                 }
                 return $outbuf;
         }
