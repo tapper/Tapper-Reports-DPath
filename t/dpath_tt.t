@@ -23,7 +23,7 @@ my $template;
 my $path;
 
 # -----------------------------------------------------------------------------------------------------------------
-construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb/report.yml' );
+construct_fixture( schema  => testrundb_schema, fixture => 't/fixtures/testrundb/report.yml' );
 # -----------------------------------------------------------------------------------------------------------------
 
 # component paths look (and must be) absolute, but are always taken relative to comp_root

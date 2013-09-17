@@ -20,7 +20,7 @@ plan tests => 3;
 my $tt = new Tapper::Reports::DPath::TT;
 
 # -----------------------------------------------------------------------------------------------------------------
-construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb/report.yml' );
+construct_fixture( schema  => testrundb_schema, fixture => 't/fixtures/testrundb/report.yml' );
 # -----------------------------------------------------------------------------------------------------------------
 
 

@@ -162,7 +162,7 @@ package Tapper::Reports::DPath;
                 my $dpath              = new Data::DPath::Path( path => $path );
                 $condition             = _fix_condition($condition) unless $puresqlabstract;
                 my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
-                my $rs = model('ReportsDB')->resultset('Report')->search
+                my $rs = model('TestrunDB')->resultset('Report')->search
                     (
                      {
                       %condition
@@ -254,7 +254,7 @@ package Tapper::Reports::DPath;
 
                 # if ($report->reportgrouptestrun) {
                 #         my $rgt_id = $report->reportgrouptestrun->testrun_id;
-                #         my $rgt_reports = model('ReportsDB')->resultset('ReportgroupTestrun')->search({ testrun_id => $rgt_id});
+                #         my $rgt_reports = model('TestrunDB')->resultset('ReportgroupTestrun')->search({ testrun_id => $rgt_id});
                 #         # say STDERR "\nrgt $rgt_id count: ", $rgt_reports->count;
                 # }
 
@@ -310,11 +310,11 @@ package Tapper::Reports::DPath;
                 # create report group stats
                 if ($report->reportgrouptestrun and $report->reportgrouptestrun->testrun_id)
                 {
-                        my $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->find($rgt->testrun_id);
+                        my $rgt_stats = model('TestrunDB')->resultset('ReportgroupTestrunStats')->find($rgt->testrun_id);
                         unless ($rgt_stats and $rgt_stats->testrun_id)
                         {
                                 # This is just a fail-back mechanism, in case the "fix-missinging-groupstats" script has not yet been run.
-                                $rgt_stats = model('ReportsDB')->resultset('ReportgroupTestrunStats')->new({ testrun_id => $rgt->testrun_id});
+                                $rgt_stats = model('TestrunDB')->resultset('ReportgroupTestrunStats')->new({ testrun_id => $rgt->testrun_id});
                                 $rgt_stats->update_failed_passed;
                                 $rgt_stats->insert;
                         }
