@@ -178,7 +178,6 @@ package Tapper::Reports::DPath;
                                                peerport
                                                peerhost
                                                successgrade
-                                               reviewed_successgrade
                                                total
                                                failed
                                                parse_errors
