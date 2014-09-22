@@ -23,12 +23,12 @@ my $path;
 my @res;
 
 # -----------------------------------------------------------------------------------------------------------------
-construct_fixture( schema  => reportsdb_schema, fixture => 't/fixtures/reportsdb/report.yml' );
+construct_fixture( schema  => testrundb_schema, fixture => 't/fixtures/testrundb/report.yml' );
 # -----------------------------------------------------------------------------------------------------------------
 
-is( reportsdb_schema->resultset('Report')->count, 4,  "report count" );
+is( testrundb_schema->resultset('Report')->count, 4,  "report count" );
 
-my $report      = reportsdb_schema->resultset('Report')->find(23);
+my $report      = testrundb_schema->resultset('Report')->find(23);
 #print STDERR Dumper($report->tap);
 my $tapdom = $report->get_cached_tapdom;
 #print STDERR Dumper($tapdom);
@@ -161,7 +161,7 @@ cmp_bag(\@res, [ 22, 20 ], "report ids of reportgroup_arbitrary_id zomtec" );
 # diag Dumper(\@res);
 
 # ------ context meta info ----
-$report      = reportsdb_schema->resultset('Report')->find(20);
+$report      = testrundb_schema->resultset('Report')->find(20);
 #print STDERR Dumper($report->tap);
 $tapdom = $report->get_cached_tapdom;
 #print STDERR Dumper($tapdom);
