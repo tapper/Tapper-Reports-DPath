@@ -200,14 +200,14 @@
   data:
     testrun_id: 17
     report_id: 22
-    primaryreport: ~
+    primaryreport: 0
 
 - schema: ReportgroupTestrun
   name: 17-20
   data:
     testrun_id: 17
     report_id: 20
-    primaryreport: ~
+    primaryreport: 0
 
 # arbitrary zomtec: [ 20, 22 ]
 
@@ -216,12 +216,12 @@
   data:
     arbitrary_id: zomtec
     report_id: 20
-    primaryreport: ~
+    primaryreport: 0
 
 - schema: ReportgroupArbitrary
   name: zomtec-22
   data:
     arbitrary_id: zomtec
     report_id: 22
-    primaryreport: ~
+    primaryreport: 0
 
