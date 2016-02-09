@@ -238,51 +238,61 @@ package Tapper::Reports::DPath;
         }
 
         sub _groupcontext {
-
                 my ($report) = @_;
 
                 my %groupcontext = ();
-                my $id           = $report->id;
-                my $rga          = $report->reportgrouparbitrary;
-                my $rgt          = $report->reportgrouptestrun;
+                my $id = $report->id;
+                my $rga = $report->reportgrouparbitrary;
+                my $rgt = $report->reportgrouptestrun;
                 my %groupreports = (
-                        arbitrary    => $rga ? $rga               : undef,
-                        arbitrary_id => $rga ? $rga->arbitrary_id : undef,
-                        testrun      => $rgt ? $rgt               : undef,
-                        testrun_id   => $rgt ? $rgt->testrun_id   : undef,
-                );
+                                    arbitrary    => $rga ? scalar $rga->groupreports : undef,
+                                    arbitrary_id => $rga ?        $rga->arbitrary_id : undef,
+                                    testrun      => $rgt ? scalar $rgt->groupreports   : undef,
+                                    testrun_id   => $rgt ?        $rgt->testrun_id     : undef,
+                                   );
 
-                foreach my $type (qw(arbitrary testrun)) {
+                # if ($report->reportgrouptestrun) {
+                #         my $rgt_id = $report->reportgrouptestrun->testrun_id;
+                #         my $rgt_reports = model('TestrunDB')->resultset('ReportgroupTestrun')->search({ testrun_id => $rgt_id});
+                #         # say STDERR "\nrgt $rgt_id count: ", $rgt_reports->count;
+                # }
 
+                foreach my $type (qw(arbitrary testrun))
+                {
                         next unless $groupreports{$type};
-
                         my $group_id = $groupreports{"${type}_id"};
-                        my $search   = $groupreports{$type}
-                            ->related_reports
-                            ->search({},{ prefetch => { 'report' => 'reportsections' } })
-                        ;
 
-                        while ( my $groupreport = $search->next ) {
-
+                        # say STDERR "${type}_id: ", $groupreports{"${type}_id"};
+                        # say STDERR "  groupreports{$type}.count: ",    $groupreports{$type}->count;
+                        # say STDERR "* $id - groupreports{$type}.count: ",    $groupreports{$type}->count;
+                        while (my $groupreport = $groupreports{$type}->next)
+                        {
+                                my $groupreport_id = $groupreport->id;
+                                # say STDERR "  gr.id: $groupreport_id";
                                 my @greportsection_meta = ();
-                                my $groupreport_id      = $groupreport->report_id;
-                                my $grsections          = $groupreport->report->reportsections;
-
-                                while ( my $section = $grsections->next ) {
+                                my $grsections = $groupreport->reportsections;
+                                # say STDERR "* $groupreport_id GROUPREPORT_SECTIONS count: ", $grsections->count;
+                                while (my $section = $grsections->next)
+                                {
                                         my %columns = $section->get_columns;
                                         foreach (keys %columns) {
                                                 delete $columns{$_} unless defined $columns{$_};
                                         }
                                         delete $columns{$_} foreach qw(succession name id report_id);
                                         push @greportsection_meta, {
-                                                $section->name => { %columns }
-                                        } if keys %columns;
+                                                                    $section->name => {
+                                                                                       %columns
+                                                                                      }
+                                                                   }
+                                            if keys %columns;
                                 }
+                                my $primary = 0;
+                                $primary = 1 if $type eq "arbitrary" && $groupreport->reportgrouparbitrary->primaryreport;
+                                $primary = 1 if $type eq "testrun"   && $groupreport->reportgrouptestrun->primaryreport;
 
-                                $groupcontext{$type}{$group_id}{$groupreport_id}{myself}  = $groupreport_id == $id ? 1 : 0;
-                                $groupcontext{$type}{$group_id}{$groupreport_id}{primary} = $groupreport->primaryreport ? 1 : 0;
-                                $groupcontext{$type}{$group_id}{$groupreport_id}{meta}    = \@greportsection_meta;
-
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{myself}     = $groupreport_id == $id ? 1 : 0;
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{primary}    = $primary ? 1 : 0;
+                                $groupcontext{$type}{$group_id}{$groupreport_id}{meta}       = \@greportsection_meta;
                         }
                 }
 
