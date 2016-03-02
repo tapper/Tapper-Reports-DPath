@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+        - drop 'exit' and 'wait' due to keyword conflicts in db
 
 5.0.0     2016-02-15
         - database merge: TestrunDB+ReportsDB->TestrunDB

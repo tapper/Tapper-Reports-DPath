@@ -185,8 +185,6 @@ package Tapper::Reports::DPath;
                                                skipped
                                                todo
                                                todo_passed
-                                               wait
-                                               exit
                                                success_ratio
                                                starttime_test_program
                                                endtime_test_program
@@ -317,7 +315,7 @@ package Tapper::Reports::DPath;
                                 $rgt_stats->update_failed_passed;
                                 $rgt_stats->insert;
                         }
-                        my @stat_fields = (qw/failed passed total parse_errors skipped todo todo_passed wait success_ratio/);
+                        my @stat_fields = (qw/failed passed total parse_errors skipped todo todo_passed success_ratio/);
                         no strict 'refs'; ## no critic (ProhibitNoStrict)
                         $reportgroupstats = {
                                              map { ($_ => $rgt_stats->$_ ) } @stat_fields
