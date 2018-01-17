@@ -24,11 +24,11 @@ package Tapper::Reports::DPath;
                 return ($condition, $path);
         }
 
-        # better use alias
-        sub rds($) { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
-
-        # better use alias
+        # frontend alias for reports_dpath_search
         sub reportdata($) { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
+
+        # frontend alias for testruns_dpath_search
+        sub testrundata($) { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
         # allow trivial better readable column names
         # - foo => 23           ... mapped to "me.foo" => 23
@@ -391,25 +391,20 @@ the DB.
 
 =head1 API FUNCTIONS
 
-
-=head2 reports_dpath_search
-
-Takes an extended DPath expression, applies it to Tapper Reports
-with TAP::DOM structure and returns the matching results in an array.
-
-
-=head2 rds
-
-Alias for reports_dpath_search.
-
-
 =head2 reportdata
 
-Alias for reports_dpath_search.
-
+The actually exported API function which is the frontend to
+reports_dpath_search.
 
 
 =head1 UTILITY FUNCTIONS
+
+=head2 reports_dpath_search
+
+This is the backend behind the API function reportdata.
+
+It takes an extended DPath expression, applies it to Tapper Reports
+with TAP::DOM structure and returns the matching results in an array.
 
 
 =head2 cache_single_dpath
@@ -432,4 +427,3 @@ Cache a result for a complete tapper::dpath on all reports.
 Return cached result for a complete tapper::dpath on all reports.
 
 =cut
-
