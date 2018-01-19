@@ -1,5 +1,5 @@
 % use 5.010;
-% use Tapper::Reports::DPath 'reportdata';
+% use Tapper::Reports::DPath 'reportdata', 'testrundata';
 % use Data::Dumper;
 % use Data::DPath 'dpath';
 % use DateTime;

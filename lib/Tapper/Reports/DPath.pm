@@ -13,8 +13,8 @@ package Tapper::Reports::DPath;
 
         our $puresqlabstract = 0;
 
-        use Sub::Exporter -setup => { exports =>           [ 'reportdata' ],
-                                      groups  => { all  => [ 'reportdata' ] },
+        use Sub::Exporter -setup => { exports =>           [ 'reportdata', 'testrundata' ],
+                                      groups  => { all  => [ 'reportdata', 'testrundata' ] },
                                     };
 
         sub _extract_condition_attrs_and_path {
@@ -80,6 +80,23 @@ package Tapper::Reports::DPath;
                 $condition      =~ s/(['"])?\breportgroup_arbitrary_id\b(['"])?\s*=>/"reportgrouparbitrary.arbitrary_id" =>/;                                       # ';
                 $condition      =~ s/([^-\w])(['"])?((report|me)\.)?(?<!suite\.)(?<!reportgrouparbitrary\.)(?<!reportgrouptestrun\.)(?!$SQLKEYWORDS)(\w+)\b(['"])?(\s*)=>/$1"me.$5" =>/;        # ';
 
+                return $condition;
+
+        }
+
+        # allow trivial better readable column names
+        # - foo => 23           ... mapped to "me.foo" => 23
+        # - "report.foo" => 23  ... mapped to "me.foo" => 23
+        # - testrun_id => 23    ... mapped to "me.testrun_id" => 23
+        # - suite_name => "bar" ... mapped to "suite.name" => "bar"
+        # - -and => ...         ... mapped to "-and" => ...            # just to ensure that it doesn't produce: "me.-and" => ...
+        sub _fix_condition_testrundata
+        {
+                no warnings 'uninitialized';
+                my $SQLKEYWORDS = 'like|-in|-and|-or';
+                my ($condition) = @_;
+                # joined suite
+                $condition      =~ s/([^-\w])(?<!\.)(['"])?((host|queue|testrun)_)(\w+)\b(['"])?(\s*)=>/$1"$4.$5" =>/g;        # ';
                 return $condition;
 
         }
@@ -244,23 +261,100 @@ package Tapper::Reports::DPath;
                         my $report_id = $row->id;
 
                         # layer 1 cache
-
-                        my $cached_row_res = cached_single_dpath( $path, $report_id );
+                        my $cached_row_res = cached_single_dpath( $path, "r$report_id" );
 
                         if (defined $cached_row_res) {
                                 push @res, @$cached_row_res;
                                 next;
                         }
 
-                        my $data = _as_data($row);
+                        my $data = _report_as_data($row);
                         my @row_res = $dpath->match( $data );
 
-                        cache_single_dpath($path, $report_id, \@row_res);
+                        cache_single_dpath($path, "r$report_id", \@row_res);
 
                         push @res, @row_res;
                 }
 
-                cache_whole_dpath($reports_path, $rs_count, \@res);
+                cache_whole_dpath($query_path, $rs_count, \@res);
+
+                return @res;
+        }
+
+        sub testrun_dpath_search($) { ## no critic (ProhibitSubroutinePrototypes)
+                my ($query_path) = @_;
+
+                #my ($condition, $path) = _extract_condition_and_path($query_path);
+                my ($condition, $attrs, $path) = _extract_condition_attrs_and_path($query_path);
+                my $dpath              = Data::DPath::Path->new( path => $path );
+                $condition             = _fix_condition_testrundata($condition) unless $puresqlabstract;
+                my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
+                my %attrs              = $attrs     ? %{ eval $attrs     } : (); ## no critic (ProhibitStringyEval)
+
+                print STDERR Dumper(
+                    {
+                        condition => \%condition,
+                        attrs => \%attrs,
+                    });
+                my $rs = model('TestrunDB')->resultset('TestrunScheduling')->search
+                    (
+                     {
+                      %condition
+                     },
+                     {
+                      order_by  => 'testrun_id asc',
+                      columns   => [ qw(
+                                         testrun_id
+                                         queue_id
+                                         host_id
+                                         prioqueue_seq
+                                         status
+                                         auto_rerun
+                                         created_at
+                                         updated_at
+                                      )],
+                      join      => [ 'host',       'requested_hosts', 'requested_features', 'queue', 'testrun' ],
+                      '+select' => [ 'host.name', 'host.free', 'host.active', 'queue.name', 'testrun.shortname', 'testrun.notes', 'testrun.starttime_testrun', 'testrun.starttime_test_program', 'testrun.endtime_test_program', 'testrun.owner_id', 'testrun.testplan_id', 'testrun.wait_after_tests', 'testrun.rerun_on_error', 'testrun.created_at', 'testrun.updated_at', 'testrun.topic_name',
+
+                                   ],
+                      '+as'     => [ 'host_name', 'host_free', 'host_active', 'queue_name', 'testrun_shortname', 'testrun_notes', 'testrun_starttime_testrun', 'testrun_starttime_test_program', 'testrun_endtime_test_program', 'testrun_owner_id', 'testrun_testplan_id', 'testrun_wait_after_tests', 'testrun_rerun_on_error', 'testrun_created_at', 'testrun_updated_at', 'testrun_topic_name',
+
+                                   ],
+                      %attrs,
+                      limit => 10,
+                     }
+                    );
+
+                #print STDERR Dumper($rs);
+
+                my $rs_count = $rs->count();
+                my @res = ();
+
+                # layer 2 cache
+                my $cached_res = cached_whole_dpath( $query_path, $rs_count );
+                return @$cached_res if defined $cached_res;
+
+                while (my $row = $rs->next)
+                {
+                        my $testrun_id = $row->testrun_id;
+
+                        # layer 1 cache
+                        my $cached_row_res = cached_single_dpath( $path, "tr$testrun_id" );
+
+                        if (defined $cached_row_res) {
+                                push @res, @$cached_row_res;
+                                next;
+                        }
+
+                        my $data = _testrun_as_data($row);
+                        my @row_res = $dpath->match( $data );
+
+                        cache_single_dpath($path, "tr$testrun_id", \@row_res);
+
+                        push @res, @row_res;
+                }
+
+                cache_whole_dpath($query_path, $rs_count, \@res);
 
                 return @res;
         }
@@ -392,6 +486,25 @@ package Tapper::Reports::DPath;
                                   };
                 return $simple_hash;
         }
+
+        sub _testrun_as_data
+        {
+                my ($testrun) = @_;
+
+                my $simple_hash = {
+                  testrun => {
+                    $testrun->get_columns,
+                  },
+                  host => {
+                    $testrun->host->get_columns,
+                  },
+                  queue => {
+                    $testrun->queue->get_columns,
+                  },
+                };
+                return $simple_hash;
+        }
+
 1;
 
 __END__
@@ -432,6 +545,12 @@ The actually exported API function which is the frontend to
 reports_dpath_search.
 
 
+=head2 testrundata
+
+The actually exported API function which is the frontend to
+testrun_dpath_search.
+
+
 =head1 UTILITY FUNCTIONS
 
 =head2 reports_dpath_search
@@ -440,6 +559,15 @@ This is the backend behind the API function reportdata.
 
 It takes an extended DPath expression, applies it to Tapper Reports
 with TAP::DOM structure and returns the matching results in an array.
+
+
+=head2 testrun_dpath_search
+
+This is the backend behind the API function testrundata.
+
+It takes an extended DPath expression, applies it to Tapper Testrun
+with the resultset as data structure and returns the matching results
+in an array.
 
 
 =head2 cache_single_dpath
