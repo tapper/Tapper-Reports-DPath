@@ -38,7 +38,7 @@ package Tapper::Reports::DPath::TT;
                 $Template::Stash::SCALAR_OPS->{dpath_match}= sub { my ($path, $data) = @_; dpath($path)->match($data); };
                 $Template::Stash::LIST_OPS->{to_json}      = sub { JSON->new->pretty->encode(unbless $_[0]) };
                 $Template::Stash::LIST_OPS->{to_yaml}      = sub { YAML::XS::Dump(unbless $_[0])    };
-                $Template::Stash::LIST_OPS->{Dumper}       = sub { Dumper @_ };
+                $Template::Stash::LIST_OPS->{Dumper}       = sub { $Data::Dumper::Sortkeys = 1; Dumper @_ };
                 return $tt;
         }
 

@@ -6,3 +6,4 @@
 % use JSON;
 % use YAML::XS;
 % use Data::Structure::Util 'unbless';
+% $Data::Dumper::Sortkeys = 1;
