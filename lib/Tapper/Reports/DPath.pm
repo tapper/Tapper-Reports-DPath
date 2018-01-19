@@ -17,11 +17,45 @@ package Tapper::Reports::DPath;
                                       groups  => { all  => [ 'reportdata' ] },
                                     };
 
-        sub _extract_condition_and_part {
-                my ($reports_path) = @_;
-                my ($condition, $path) = extract_codeblock($reports_path, '{}');
-                $path =~ s/^\s*::\s*//;
-                return ($condition, $path);
+        sub _extract_condition_attrs_and_path {
+                my ($query_path) = @_;
+
+                my $condition;
+                my $attrs;
+                my $path;
+
+                my $head;
+                my $tail;
+                my $count;
+
+                # first codeblock is condition
+                ($condition, $tail) = extract_codeblock($query_path, '{}');
+                $count = ($tail =~ s/^\s*::\s*//g);
+
+                # Maybe there is an optional second codeblock (attrs)
+                # but we need to find out by looking for a third block
+                # and then decide.
+                ($head, $tail) = extract_codeblock($tail, '{}');
+                $count = ($tail =~ s/^\s*::\s*//g);
+
+                if ($count) {
+                    $attrs = $head;
+                    $path = $tail;
+                } else {
+                    $attrs = undef;
+                    $path = $head;
+                }
+
+                # tail is path
+                $path = $tail;
+                return ($condition, $attrs, $path);
+        }
+
+        # backwards compatible frontend to new triplet API
+        sub _extract_condition_and_path {
+                my ($condition, $attrs, $path) = _extract_condition_attrs_and_path(@_);
+                warn "DEPRECATED _extract_condition_and_path() - use _extract_condition_attrs_and_path()\n";
+                return ($condition, $path); # no attrs
         }
 
         # frontend alias for reports_dpath_search
@@ -158,7 +192,7 @@ package Tapper::Reports::DPath;
         sub reports_dpath_search($) { ## no critic (ProhibitSubroutinePrototypes)
                 my ($reports_path) = @_;
 
-                my ($condition, $path) = _extract_condition_and_part($reports_path);
+                my ($condition, $path) = _extract_condition_and_path($query_path);
                 my $dpath              = new Data::DPath::Path( path => $path );
                 $condition             = _fix_condition($condition) unless $puresqlabstract;
                 my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
