@@ -62,14 +62,14 @@ package Tapper::Reports::DPath;
         sub reportdata($) { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
         # frontend alias for testruns_dpath_search
-        sub testrundata($) { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
+        sub testrundata($) { testrun_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
         # allow trivial better readable column names
         # - foo => 23           ... mapped to "me.foo" => 23
         # - "report.foo" => 23  ... mapped to "me.foo" => 23
         # - suite_name => "bar" ... mapped to "suite.name" => "bar"
         # - -and => ...         ... mapped to "-and" => ...            # just to ensure that it doesn't produce: "me.-and" => ...
-        sub _fix_condition
+        sub _fix_condition_reportdata
         {
                 no warnings 'uninitialized';
                 my $SQLKEYWORDS = 'like|-in|-and|-or';
@@ -89,13 +89,13 @@ package Tapper::Reports::DPath;
         # ----- cache complete Tapper::Reports::DPath queries -----
 
         sub _cachekey_whole_dpath {
-                my ($reports_path) = @_;
-                my $key = ($ENV{TAPPER_DEVELOPMENT} || "0") . '::' . $reports_path;
+                my ($query_path) = @_;
+                my $key = ($ENV{TAPPER_DEVELOPMENT} || "0") . '::' . $query_path;
                 return $key;
         }
 
         sub cache_whole_dpath  {
-                my ($reports_path, $rs_count, $res) = @_;
+                my ($query_path, $rs_count, $res) = @_;
 
                 return if $ENV{HARNESS_ACTIVE};
 
@@ -110,8 +110,8 @@ package Tapper::Reports::DPath;
                 # we cache on the dpath
                 # but need count to verify and maintain cache validity
 
-#                say STDERR "  -> set whole: $reports_path ($rs_count)";
-                $cache->set( _cachekey_whole_dpath($reports_path),
+#                say STDERR "  -> set whole: $query_path ($rs_count)";
+                $cache->set( _cachekey_whole_dpath($query_path),
                              {
                               count => $rs_count,
                               res   => $res,
@@ -119,7 +119,7 @@ package Tapper::Reports::DPath;
         }
 
         sub cached_whole_dpath {
-                my ($reports_path, $rs_count) = @_;
+                my ($query_path, $rs_count) = @_;
 
                 return if $ENV{HARNESS_ACTIVE};
 
@@ -129,10 +129,10 @@ package Tapper::Reports::DPath;
                                       compress => 1,
                                     );
                 $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
-                my $cached_res = $cache->get(  _cachekey_whole_dpath($reports_path) );
+                my $cached_res = $cache->get(  _cachekey_whole_dpath($query_path) );
 
                 my $cached_res_count = $cached_res->{count} || 0;
-#                say STDERR "  <- get whole: $reports_path ($rs_count vs. $cached_res_count)";
+#                say STDERR "  <- get whole: $query_path ($rs_count vs. $cached_res_count)";
                 return if not defined $cached_res;
 
                 if ($cached_res_count == $rs_count) {
@@ -141,7 +141,7 @@ package Tapper::Reports::DPath;
                 }
 
                 # clean up when matching report count changed
-                $cache->remove( $reports_path );
+                $cache->remove( $query_path );
                 return;
         }
 
@@ -155,7 +155,7 @@ package Tapper::Reports::DPath;
         }
 
         sub cache_single_dpath {
-                my ($path, $reports_id, $res) = @_;
+                my ($path, $cache_key, $res) = @_;
 
                 return if $ENV{HARNESS_ACTIVE};
 
@@ -165,13 +165,13 @@ package Tapper::Reports::DPath;
                                       compress => 1,
                                     );
                 $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
-                $cache->set( _cachekey_single_dpath( $path, $reports_id ),
+                $cache->set( _cachekey_single_dpath( $path, $cache_key ),
                              $res
                            );
         }
 
         sub cached_single_dpath {
-                my ($path, $reports_id) = @_;
+                my ($path, $cache_key) = @_;
 
                 return if $ENV{HARNESS_ACTIVE};
 
@@ -181,20 +181,20 @@ package Tapper::Reports::DPath;
                                       compress => 1,
                                     );
                 $cache->clear() if -e '/tmp/TAPPER_CACHE_CLEAR';
-                my $cached_res = $cache->get( _cachekey_single_dpath( $path, $reports_id ));
+                my $cached_res = $cache->get( _cachekey_single_dpath( $path, $cache_key ));
 
-#                print STDERR "  <- get single: $reports_id -- $path: ".Dumper($cached_res);
+#                print STDERR "  <- get single: $cache_key -- $path: ".Dumper($cached_res);
                 return $cached_res;
         }
 
         # ===== the query search =====
 
         sub reports_dpath_search($) { ## no critic (ProhibitSubroutinePrototypes)
-                my ($reports_path) = @_;
+                my ($query_path) = @_;
 
                 my ($condition, $path) = _extract_condition_and_path($query_path);
                 my $dpath              = new Data::DPath::Path( path => $path );
-                $condition             = _fix_condition($condition) unless $puresqlabstract;
+                $condition             = _fix_condition_reportdata($condition) unless $puresqlabstract;
                 my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
                 my $rs = model('TestrunDB')->resultset('Report')->search
                     (
@@ -236,12 +236,13 @@ package Tapper::Reports::DPath;
                 my @res = ();
 
                 # layer 2 cache
-                my $cached_res = cached_whole_dpath( $reports_path, $rs_count );
+                my $cached_res = cached_whole_dpath( $query_path, $rs_count );
                 return @$cached_res if defined $cached_res;
 
                 while (my $row = $rs->next)
                 {
                         my $report_id = $row->id;
+
                         # layer 1 cache
 
                         my $cached_row_res = cached_single_dpath( $path, $report_id );
@@ -358,7 +359,7 @@ package Tapper::Reports::DPath;
                 return $reportgroupstats;
         }
 
-        sub _as_data
+        sub _report_as_data
         {
                 my ($report) = @_;
 
@@ -443,12 +444,12 @@ with TAP::DOM structure and returns the matching results in an array.
 
 =head2 cache_single_dpath
 
-Cache a result for a raw dpath on a report id.
+Cache a result for a raw dpath on a cache key.
 
 
 =head2 cached_single_dpath
 
-Return cached result for a raw dpath on a report id.
+Return cached result for a raw dpath on a cache key.
 
 
 =head2 cache_whole_dpath
