@@ -291,7 +291,7 @@ package Tapper::Reports::DPath;
                 my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
                 my %attrs              = $attrs     ? %{ eval $attrs     } : (); ## no critic (ProhibitStringyEval)
 
-                print STDERR Dumper(
+                print STDERR "testrun_dpath_search: ".Dumper(
                     {
                         condition => \%condition,
                         attrs => \%attrs,
@@ -320,8 +320,8 @@ package Tapper::Reports::DPath;
                       '+as'     => [ 'host_name', 'host_free', 'host_active', 'queue_name', 'testrun_shortname', 'testrun_notes', 'testrun_starttime_testrun', 'testrun_starttime_test_program', 'testrun_endtime_test_program', 'testrun_owner_id', 'testrun_testplan_id', 'testrun_wait_after_tests', 'testrun_rerun_on_error', 'testrun_created_at', 'testrun_updated_at', 'testrun_topic_name',
 
                                    ],
-                      %attrs,
                       limit => 10,
+                      %attrs,
                      }
                     );
 
