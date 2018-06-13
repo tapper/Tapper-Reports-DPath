@@ -13,8 +13,8 @@ package Tapper::Reports::DPath;
 
         our $puresqlabstract = 0;
 
-        use Sub::Exporter -setup => { exports =>           [ 'reportdata', 'testrundata' ],
-                                      groups  => { all  => [ 'reportdata', 'testrundata' ] },
+        use Sub::Exporter -setup => { exports =>           [ 'reportdata', 'testrundata', 'testplandata' ],
+                                      groups  => { all  => [ 'reportdata', 'testrundata', 'testplandata' ] },
                                     };
 
         sub _extract_condition_attrs_and_path {
@@ -61,8 +61,11 @@ package Tapper::Reports::DPath;
         # frontend alias for reports_dpath_search
         sub reportdata($) { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
-        # frontend alias for testruns_dpath_search
+        # frontend alias for testrun_dpath_search
         sub testrundata($) { testrun_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
+
+        # frontend alias for testplan_dpath_search
+        sub testplandata($) { testplan_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
         # allow trivial better readable column names
         # - foo => 23           ... mapped to "me.foo" => 23
@@ -359,6 +362,56 @@ package Tapper::Reports::DPath;
                 return @res;
         }
 
+        sub testplan_dpath_search($) { ## no critic (ProhibitSubroutinePrototypes)
+                my ($query_path) = @_;
+
+                my ($condition, $attrs, $path) = _extract_condition_attrs_and_path($query_path);
+                my $dpath              = Data::DPath::Path->new( path => $path );
+                my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
+                my %attrs              = $attrs     ? %{ eval $attrs     } : (); ## no critic (ProhibitStringyEval)
+
+                print STDERR "testplan_dpath_search: ".Dumper(
+                    {
+                        condition => \%condition,
+                        attrs => \%attrs,
+                    });
+                my $rs = model('TestrunDB')->resultset('TestplanInstance')->search
+                    (
+                     {
+                      %condition
+                     },
+                     {
+                      order_by  => 'id asc',
+                      columns   => [ qw(
+                                         id
+                                         path
+                                         name
+                                         evaluated_testplan
+                                         created_at
+                                         updated_at
+                                      )],
+                      limit => 10,
+                      %attrs,
+                     }
+                    );
+
+                #print STDERR Dumper($rs);
+
+                my @res = ();
+
+                while (my $row = $rs->next)
+                {
+                        my $testplan_id = $row->id;
+
+                        my $data = _testplan_as_data($row);
+                        my @row_res = $dpath->match( $data );
+
+                        push @res, @row_res;
+                }
+
+                return @res;
+        }
+
         sub _dummy_needed_for_tests {
                 # once there were problems with eval
                 return eval "12345"; ## no critic (ProhibitStringyEval)
@@ -505,6 +558,41 @@ package Tapper::Reports::DPath;
                 return $simple_hash;
         }
 
+        sub _testplan_as_data
+        {
+            my ($testplan) = @_;
+
+            my @testruns = $testplan->testruns->all;
+
+            my $simple_hash = {
+                testplan => {
+                    id                          => $testplan->id,
+                    name                        => $testplan->name,
+                    created_at_ymd_hms          => $testplan->created_at->ymd('-')." ".$testplan->created_at->hms(':'),
+                    created_at_ymd              => $testplan->created_at->ymd('-'),
+                    #testplan_evaluated_testplan => $testplan->evaluated_testplan,
+                },
+                testruns => [
+                    map {
+                        my $ts   = $_->testrun_scheduling;
+                        my $rgts = $_->reportgrouptestrunstats;
+                        my $host = $ts->host;
+                        my $host_name = $host ? $host->name : 'undefined_host';
+                        {
+                            id         => $_->id,
+                            topic_name => $_->topic_name,
+                            host_name  => $host_name,
+                            status     => $ts->status->value,
+                            stats      => {
+                                $rgts ? $rgts->get_columns : (),
+                            },
+                        }
+                    } @testruns
+                    ],
+            };
+            return $simple_hash;
+        }
+
 1;
 
 __END__
@@ -551,6 +639,12 @@ The actually exported API function which is the frontend to
 testrun_dpath_search.
 
 
+=head2 testplandata
+
+The actually exported API function which is the frontend to
+testplan_dpath_search.
+
+
 =head1 UTILITY FUNCTIONS
 
 =head2 reports_dpath_search
@@ -566,6 +660,15 @@ with TAP::DOM structure and returns the matching results in an array.
 This is the backend behind the API function testrundata.
 
 It takes an extended DPath expression, applies it to Tapper Testrun
+with the resultset as data structure and returns the matching results
+in an array.
+
+
+=head2 testplan_dpath_search
+
+This is the backend behind the API function testplandata.
+
+It takes an extended DPath expression, applies it to Tapper Testplan
 with the resultset as data structure and returns the matching results
 in an array.
 

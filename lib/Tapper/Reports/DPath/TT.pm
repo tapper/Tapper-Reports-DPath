@@ -11,7 +11,7 @@ package Tapper::Reports::DPath::TT;
         use Template::Stash;
 
         # modules needed inside the TT template for vmethods
-        use Tapper::Reports::DPath 'reportdata', 'testrundata';
+        use Tapper::Reports::DPath 'reportdata', 'testrundata', 'testplandata';
         use Tapper::Model 'model';
         use Data::Dumper;
         use Data::DPath 'dpath';
@@ -35,6 +35,7 @@ package Tapper::Reports::DPath::TT;
                                       });
                 $Template::Stash::SCALAR_OPS->{reportdata} = sub { reportdata($_[0]) };
                 $Template::Stash::SCALAR_OPS->{testrundata} = sub { testrundata($_[0]) };
+                $Template::Stash::SCALAR_OPS->{testplandata} = sub { testplandata($_[0]) };
                 $Template::Stash::SCALAR_OPS->{dpath_match}= sub { my ($path, $data) = @_; dpath($path)->match($data); };
                 $Template::Stash::LIST_OPS->{to_json}      = sub { JSON->new->pretty->encode(unbless $_[0]) };
                 $Template::Stash::LIST_OPS->{to_yaml}      = sub { YAML::XS::Dump(unbless $_[0])    };
@@ -76,6 +77,7 @@ package Tapper::Reports::DPath::TT;
                 local $Tapper::Reports::DPath::puresqlabstract = $self->puresqlabstract;
                 if(not $tt->process(\$template, {reportdata => \&reportdata,
                                                  testrundata => \&testrundata,
+                                                 testplandata => \&testplandata,
                                                  testrundb_hostnames => \&testrundb_hostnames,
                                                  defined $self->substitutes ? ( %{$self->substitutes} ) : (),
                                                 }, \$outbuf)) {
