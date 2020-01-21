@@ -2,6 +2,8 @@ Revision history for {{$dist->name}}
 
 {{$NEXT}}
         - cleanup reports API
+        - rework internal path extraction function
+        - new API functions: testplandata, testrundata, testrundata_nohost
 
 5.0.2     2016-03-30
         - more explicit dependencies for cpantesters
