@@ -35,6 +35,7 @@ package Tapper::Reports::DPath::TT;
                                       });
                 $Template::Stash::SCALAR_OPS->{reportdata} = sub { reportdata($_[0]) };
                 $Template::Stash::SCALAR_OPS->{testrundata} = sub { testrundata($_[0]) };
+                $Template::Stash::SCALAR_OPS->{testrundata_nohost} = sub { testrundata($_[0], 1) }; # nohost=1
                 $Template::Stash::SCALAR_OPS->{testplandata} = sub { testplandata($_[0]) };
                 $Template::Stash::SCALAR_OPS->{dpath_match}= sub { my ($path, $data) = @_; dpath($path)->match($data); };
                 $Template::Stash::LIST_OPS->{to_json}      = sub { JSON->new->pretty->encode(unbless $_[0]) };

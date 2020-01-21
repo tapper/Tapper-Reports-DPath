@@ -59,13 +59,13 @@ package Tapper::Reports::DPath;
         }
 
         # frontend alias for reports_dpath_search
-        sub reportdata($) { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
+        sub reportdata { reports_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
         # frontend alias for testrun_dpath_search
-        sub testrundata($) { testrun_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
+        sub testrundata { testrun_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
         # frontend alias for testplan_dpath_search
-        sub testplandata($) { testplan_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
+        sub testplandata { testplan_dpath_search(@_) } ## no critic (ProhibitSubroutinePrototypes)
 
         # allow trivial better readable column names
         # - foo => 23           ... mapped to "me.foo" => 23
@@ -285,7 +285,7 @@ package Tapper::Reports::DPath;
         }
 
         sub testrun_dpath_search($) { ## no critic (ProhibitSubroutinePrototypes)
-                my ($query_path) = @_;
+                my ($query_path, $nohost) = @_;
 
                 #my ($condition, $path) = _extract_condition_and_path($query_path);
                 my ($condition, $attrs, $path) = _extract_condition_attrs_and_path($query_path);
@@ -294,38 +294,42 @@ package Tapper::Reports::DPath;
                 my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
                 my %attrs              = $attrs     ? %{ eval $attrs     } : (); ## no critic (ProhibitStringyEval)
 
-                print STDERR "testrun_dpath_search: ".Dumper(
-                    {
-                        condition => \%condition,
-                        attrs => \%attrs,
-                    });
-                my $rs = model('TestrunDB')->resultset('TestrunScheduling')->search
-                    (
-                     {
-                      %condition
-                     },
-                     {
+                my $joins   = [ ($nohost ? () : ('host')), 'requested_hosts', 'requested_features', 'queue', 'testrun' ];
+                my $selects = [ ($nohost ? () : ('host.name', 'host.free', 'host.active')), 'queue.name', 'testrun.shortname', 'testrun.notes', 'testrun.starttime_testrun', 'testrun.starttime_test_program', 'testrun.endtime_test_program', 'testrun.owner_id', 'testrun.testplan_id', 'testrun.wait_after_tests', 'testrun.rerun_on_error', 'testrun.created_at', 'testrun.updated_at', 'testrun.topic_name', ];
+                my $as      = [ ($nohost ? () : ('host_name', 'host_free', 'host_active')), 'queue_name', 'testrun_shortname', 'testrun_notes', 'testrun_starttime_testrun', 'testrun_starttime_test_program', 'testrun_endtime_test_program', 'testrun_owner_id', 'testrun_testplan_id', 'testrun_wait_after_tests', 'testrun_rerun_on_error', 'testrun_created_at', 'testrun_updated_at', 'testrun_topic_name', ];
+
+                my %merged_attrs = (
                       order_by  => 'testrun_id asc',
                       columns   => [ qw(
                                          testrun_id
                                          queue_id
-                                         host_id
                                          prioqueue_seq
                                          status
                                          auto_rerun
                                          created_at
                                          updated_at
-                                      )],
-                      join      => [ 'host',       'requested_hosts', 'requested_features', 'queue', 'testrun' ],
-                      '+select' => [ 'host.name', 'host.free', 'host.active', 'queue.name', 'testrun.shortname', 'testrun.notes', 'testrun.starttime_testrun', 'testrun.starttime_test_program', 'testrun.endtime_test_program', 'testrun.owner_id', 'testrun.testplan_id', 'testrun.wait_after_tests', 'testrun.rerun_on_error', 'testrun.created_at', 'testrun.updated_at', 'testrun.topic_name',
-
+                                     ),
+                                     ($nohost ? () : ('host_id')),
                                    ],
-                      '+as'     => [ 'host_name', 'host_free', 'host_active', 'queue_name', 'testrun_shortname', 'testrun_notes', 'testrun_starttime_testrun', 'testrun_starttime_test_program', 'testrun_endtime_test_program', 'testrun_owner_id', 'testrun_testplan_id', 'testrun_wait_after_tests', 'testrun_rerun_on_error', 'testrun_created_at', 'testrun_updated_at', 'testrun_topic_name',
-
-                                   ],
+                      join      => $joins,
+                      '+select' => $selects,
+                      '+as'     => $as,
                       limit => 10,
                       %attrs,
-                     }
+                    );
+
+                print STDERR "query: $query_path\n";
+                # print STDERR "testrun_dpath_search: ".Dumper(
+                #     {
+                #         condition    => \%condition,
+                #         attrs        => \%attrs,
+                #         merged_attrs => \%merged_attrs,
+                #     });
+
+                my $rs = model('TestrunDB')->resultset('TestrunScheduling')->search
+                    (
+                     { %condition },
+                     { %merged_attrs },
                     );
 
                 #print STDERR Dumper($rs);
@@ -349,7 +353,7 @@ package Tapper::Reports::DPath;
                                 next;
                         }
 
-                        my $data = _testrun_as_data($row);
+                        my $data = _testrun_as_data($row, $nohost);
                         my @row_res = $dpath->match( $data );
 
                         cache_single_dpath($path, "tr$testrun_id", \@row_res);
@@ -542,15 +546,13 @@ package Tapper::Reports::DPath;
 
         sub _testrun_as_data
         {
-                my ($testrun) = @_;
+                my ($testrun, $nohost) = @_;
 
                 my $simple_hash = {
                   testrun => {
                     $testrun->get_columns,
                   },
-                  host => {
-                    $testrun->host->get_columns,
-                  },
+                  ($nohost ? () : ( host => { $testrun->host->get_columns } ) ),
                   queue => {
                     $testrun->queue->get_columns,
                   },
@@ -639,6 +641,13 @@ The actually exported API function which is the frontend to
 testrun_dpath_search.
 
 
+=head2 testrundata_nohost
+
+Similar to I<testrundata> but without host data, so it also
+returns testruns that are not yet started (state C<prepare>
+or C<schedule>).
+
+
 =head2 testplandata
 
 The actually exported API function which is the frontend to
@@ -655,7 +664,7 @@ It takes an extended DPath expression, applies it to Tapper Reports
 with TAP::DOM structure and returns the matching results in an array.
 
 
-=head2 testrun_dpath_search
+=head2 testrun_dpath_search($DPATH, $NOHOST)
 
 This is the backend behind the API function testrundata.
 
@@ -663,6 +672,10 @@ It takes an extended DPath expression, applies it to Tapper Testrun
 with the resultset as data structure and returns the matching results
 in an array.
 
+Optionally you can pass a flag B<NOHOST> which does not JOIN the host
+table behind the scenes and therefore also returns testruns that are
+not yet started (and therefore do not have that host set yet),
+usually in state C<prepare> or C<schedule>.
 
 =head2 testplan_dpath_search
 
