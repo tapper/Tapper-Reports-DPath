@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+5.0.3     2020-01-22
         - cleanup reports API
         - rework internal path extraction function
         - new API functions: testplandata, testrundata, testrundata_nohost
