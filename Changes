@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+        - multiline paths are trimmed from leading+trailing whitespace
 
 5.0.3     2020-01-22
         - cleanup reports API
