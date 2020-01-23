@@ -122,6 +122,7 @@ is(scalar @res, 2,  "id + dpath - all sections" );
                    :: //tap/tests_planned
                   ';
 is(scalar @res, 2,  "id + dpath - all sections + newlines" );
+diag Dumper(\@res);
 
 @res = reportdata '{ id => 23 } :: //section-000/tap/tests_planned';
 is(scalar @res, 1,  "id + dpath - section 0" );

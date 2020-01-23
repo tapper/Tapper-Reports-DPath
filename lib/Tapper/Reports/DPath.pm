@@ -213,6 +213,7 @@ package Tapper::Reports::DPath;
                 my ($query_path) = @_;
 
                 my ($condition, $path) = _extract_condition_and_path($query_path);
+                $path =~ s/^\s+|\s+$//; # drop leading+trailing whitespace
                 my $dpath              = new Data::DPath::Path( path => $path );
                 $condition             = _fix_condition_reportdata($condition) unless $puresqlabstract;
                 my %condition          = $condition ? %{ eval $condition } : (); ## no critic (ProhibitStringyEval)
