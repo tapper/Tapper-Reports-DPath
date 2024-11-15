@@ -9,6 +9,8 @@ package Tapper::Reports::DPath::Mason;
         use Cwd 'cwd';
         use Data::Dumper;
         use File::ShareDir 'module_dir';
+        use Moose::Exporter;
+        Moose::Exporter->setup_import_methods(as_is => [ 'render' ] );
 
         has debug           => ( is => 'rw');
         has puresqlabstract => ( is => 'rw', default => 0);

@@ -19,6 +19,8 @@ package Tapper::Reports::DPath::TT;
         use JSON;
         use YAML::XS;
         use Data::Structure::Util 'unbless';
+        use Moose::Exporter;
+        Moose::Exporter->setup_import_methods(as_is => [ 'render' ] );
 
         has debug           => ( is => 'rw');
         has puresqlabstract => ( is => 'rw', default => 0);
